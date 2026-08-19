@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OnboardFlow Architecture</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #0d1117;
+  color: #e6edf3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+.container {
+  width: 100%;
+  max-width: 1200px;
+}
+h1 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #58a6ff;
+}
+.subtitle {
+  text-align: center;
+  color: #8b949e;
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+}
+.architecture {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.layer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.layer-label {
+  width: 120px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #8b949e;
+  text-align: right;
+  flex-shrink: 0;
+}
+.layer-content {
+  flex: 1;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.node {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  min-width: 180px;
+  flex: 1;
+}
+.node.highlight {
+  border-color: #58a6ff;
+  background: #0d1117;
+}
+.node.gcp {
+  border-color: #4285f4;
+}
+.node.agent {
+  border-color: #34d058;
+  background: #0d1117;
+}
+.node-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.node-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+.node-desc {
+  font-size: 0.75rem;
+  color: #8b949e;
+  line-height: 1.4;
+}
+.arrow {
+  text-align: center;
+  color: #30363d;
+  font-size: 1.5rem;
+  padding: 0.25rem 0;
+}
+.badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  background: #21262d;
+  color: #8b949e;
+  margin-top: 0.5rem;
+}
+.badge.gemini { background: #1a3a2a; color: #34d058; }
+.badge.adk { background: #1a2a3a; color: #58a6ff; }
+.badge.firestore { background: #2a1a3a; color: #bc8cff; }
+.badge.pubsub { background: #3a2a1a; color: #f0883e; }
+.badge.cloudrun { background: #1a3a3a; color: #39d2c0; }
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+.tool-node {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 0.75rem;
+  text-align: center;
+}
+.tool-icon { font-size: 1.25rem; margin-bottom: 0.25rem; }
+.tool-name { font-size: 0.75rem; font-weight: 600; }
+.tool-type { font-size: 0.65rem; color: #8b949e; }
+.legend {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #8b949e;
+}
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>OnboardFlow Architecture</h1>
+  <p class="subtitle">Autonomous Employee Onboarding — Built with Google ADK + Gemini 3.5 Flash</p>
+
+  <div class="architecture">
+    <!-- Event Trigger Layer -->
+    <div class="layer">
+      <div class="layer-label">Event Source</div>
+      <div class="layer-content">
+        <div class="node gcp">
+          <div class="node-icon">📨</div>
+          <div class="node-title">Pub/Sub Topic</div>
+          <div class="node-desc">new-hire-events<br>JSON payload with employee details</div>
+          <span class="badge pubsub">Google Pub/Sub</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">↓</div>
+
+    <!-- Compute Layer -->
+    <div class="layer">
+      <div class="layer-label">Compute</div>
+      <div class="layer-content">
+        <div class="node gcp">
+          <div class="node-icon">☁️</div>
+          <div class="node-title">Cloud Run</div>
+          <div class="node-desc">Serverless container<br>Receives Pub/Sub push messages<br>FastAPI endpoints</div>
+          <span class="badge cloudrun">Google Cloud Run</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">↓</div>
+
+    <!-- Agent Layer -->
+    <div class="layer">
+      <div class="layer-label">Agent</div>
+      <div class="layer-content">
+        <div class="node agent highlight">
+          <div class="node-icon">🤖</div>
+          <div class="node-title">OnboardFlow Agent</div>
+          <div class="node-desc">Orchestrates multi-step onboarding workflow<br>Decides execution order, handles failures, tracks state</div>
+          <span class="badge gemini">Gemini 3.5 Flash</span>
+          <span class="badge adk">Google ADK</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">↓</div>
+
+    <!-- Tools Layer -->
+    <div class="layer">
+      <div class="layer-label">MCP Tools</div>
+      <div class="layer-content">
+        <div class="tools-grid">
+          <div class="tool-node">
+            <div class="tool-icon">🎫</div>
+            <div class="tool-name">Jira</div>
+            <div class="tool-type">Create ticket</div>
+          </div>
+          <div class="tool-node">
+            <div class="tool-icon">💬</div>
+            <div class="tool-name">Slack</div>
+            <div class="tool-type">Welcome msg</div>
+          </div>
+          <div class="tool-node">
+            <div class="tool-icon">📅</div>
+            <div class="tool-name">Calendar</div>
+            <div class="tool-type">Schedule mtg</div>
+          </div>
+          <div class="tool-node">
+            <div class="tool-icon">📧</div>
+            <div class="tool-name">Email</div>
+            <div class="tool-type">Welcome email</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">↓</div>
+
+    <!-- State Layer -->
+    <div class="layer">
+      <div class="layer-label">State</div>
+      <div class="layer-content">
+        <div class="node gcp">
+          <div class="node-icon">🗄️</div>
+          <div class="node-title">Firestore</div>
+          <div class="node-desc">Audit log of all onboarding actions<br>State tracking per employee<br>Workflow completion status</div>
+          <span class="badge firestore">Google Firestore</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#4285f4"></div> Google Cloud Service</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#34d058"></div> AI Agent (Gemini + ADK)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f0883e"></div> Event Trigger</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#bc8cff"></div> State Management</div>
+  </div>
+</div>
+</body>
+</html>
