@@ -66,3 +66,40 @@
   display: flex;
   flex-direction: column;
 }
+
+.chatbot-section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.tab-navigation {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+}
+
+.tab-navigation button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab-navigation button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.tab-navigation button.active {
+  background: white;
+  color: #667eea;
+  border-color: white;
+}

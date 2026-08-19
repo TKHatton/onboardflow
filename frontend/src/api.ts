@@ -49,6 +49,15 @@ export const onboardAPI = {
     return eventSource;
   },
 
+  chat: async (employeeName: string, question: string, context?: any): Promise<any> => {
+    const response = await api.post('/api/chat', {
+      employee_name: employeeName,
+      question: question,
+      context: context,
+    });
+    return response.data;
+  },
+
   healthCheck: async (): Promise<boolean> => {
     try {
       const response = await api.get('/');

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { NewHireForm } from './components/NewHireForm';
 import { WorkflowDashboard } from './components/WorkflowDashboard';
+import { Chatbot } from './components/Chatbot';
 import { onboardAPI } from './api';
 import type { NewHireData, WorkflowState, WorkflowUpdate } from './types';
 import './App.css';
@@ -12,6 +13,8 @@ function App() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [apiStatus, setApiStatus] = useState<'checking' | 'online' | 'offline'>('checking');
+  const [currentEmployee, setCurrentEmployee] = useState<NewHireData | null>(null);
+  const [activeTab, setActiveTab] = useState<'onboarding' | 'chatbot'>('onboarding');
 
   useEffect(() => {
     const checkHealth = async () => {
@@ -23,6 +26,7 @@ function App() {
 
   const handleStartOnboarding = async (data: NewHireData) => {
     setIsLoading(true);
+    setCurrentEmployee(data);
     setWorkflow({
       phase: 'reasoning',
       steps: [],
@@ -108,13 +112,47 @@ function App() {
       </header>
 
       <main className="app-main">
-        <div className="form-section">
-          <NewHireForm onSubmit={handleStartOnboarding} isLoading={isLoading} />
-        </div>
+        {currentEmployee && workflow.phase !== 'idle' && (
+          <div className="tab-navigation">
+            <button
+              className={activeTab === 'onboarding' ? 'active' : ''}
+              onClick={() => setActiveTab('onboarding')}
+            >
+              📋 Onboarding Workflow
+            </button>
+            <button
+              className={activeTab === 'chatbot' ? 'active' : ''}
+              onClick={() => setActiveTab('chatbot')}
+            >
+              💬 Ask Questions
+            </button>
+          </div>
+        )}
 
-        {workflow.phase !== 'idle' && (
-          <div className="dashboard-section">
-            <WorkflowDashboard workflow={workflow} />
+        {activeTab === 'onboarding' && (
+          <>
+            <div className="form-section">
+              <NewHireForm onSubmit={handleStartOnboarding} isLoading={isLoading} />
+            </div>
+
+            {workflow.phase !== 'idle' && (
+              <div className="dashboard-section">
+                <WorkflowDashboard workflow={workflow} />
+              </div>
+            )}
+          </>
+        )}
+
+        {activeTab === 'chatbot' && currentEmployee && (
+          <div className="chatbot-section">
+            <Chatbot
+              employeeName={currentEmployee.employee_name}
+              employeeContext={{
+                role: currentEmployee.role,
+                department: currentEmployee.department,
+                start_date: currentEmployee.start_date,
+              }}
+            />
           </div>
         )}
       </main>

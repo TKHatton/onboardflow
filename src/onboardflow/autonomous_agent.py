@@ -1,12 +1,9 @@
-"""Autonomous OnboardFlow Agent with real Gemini reasoning."""
+"""Autonomous OnboardFlow Agent with comprehensive onboarding tools."""
 
 import os
 import json
-import asyncio
 from typing import AsyncGenerator
-from dataclasses import dataclass
 from google import genai
-from google.genai import types
 
 from .tools import (
     create_jira_ticket,
@@ -16,21 +13,17 @@ from .tools import (
     send_welcome_email,
     setup_crm_access,
     create_asana_project,
+    assign_training_courses,
+    provision_equipment,
+    schedule_security_training,
+    enroll_in_benefits,
+    verify_onboarding_completion,
+    answer_onboarding_question,
 )
 
 
-@dataclass
-class WorkflowStep:
-    """A step in the onboarding workflow."""
-    action: str
-    tool: str
-    reasoning: str
-    status: str = "pending"
-    result: dict | None = None
-
-
 class AutonomousAgent:
-    """Agent that uses Gemini to autonomously decide onboarding steps."""
+    """Autonomous agent that plans and executes onboarding workflows."""
     
     def __init__(self):
         api_key = os.getenv("GOOGLE_API_KEY")
@@ -70,6 +63,30 @@ class AutonomousAgent:
                 "func": create_asana_project,
                 "description": "Create Asana project for marketing and creative work"
             },
+            "assign_training_courses": {
+                "func": assign_training_courses,
+                "description": "Assign role-based training courses with deadlines"
+            },
+            "provision_equipment": {
+                "func": provision_equipment,
+                "description": "Order and provision equipment based on role (laptop, monitor, etc.)"
+            },
+            "schedule_security_training": {
+                "func": schedule_security_training,
+                "description": "Schedule mandatory security and compliance training modules"
+            },
+            "enroll_in_benefits": {
+                "func": enroll_in_benefits,
+                "description": "Enroll employee in benefits programs (health insurance, 401k, etc.)"
+            },
+            "verify_onboarding_completion": {
+                "func": verify_onboarding_completion,
+                "description": "Verify onboarding tasks completion and send follow-ups"
+            },
+            "answer_onboarding_question": {
+                "func": answer_onboarding_question,
+                "description": "Answer onboarding-related questions from employees"
+            },
         }
     
     async def plan_onboarding(
@@ -82,7 +99,7 @@ class AutonomousAgent:
         manager: str | None = None,
     ) -> AsyncGenerator[dict, None]:
         """
-        Use Gemini to autonomously plan and execute onboarding workflow.
+        Use Gemini to autonomously plan and execute comprehensive onboarding workflow.
         Yields real-time updates as the agent reasons and executes.
         """
         
@@ -107,9 +124,12 @@ Available tools:
 
 Decide which tools to use and in what order. Consider:
 - What systems does this role need access to?
+- What equipment should be provisioned?
+- What training courses are required (role-based and security)?
 - Who should be notified?
 - What meetings should be scheduled?
-- What's the appropriate welcome process for this department?
+- What benefits information should be sent?
+- Should we schedule a follow-up verification?
 
 Respond in this exact JSON format:
 {{
@@ -123,15 +143,24 @@ Respond in this exact JSON format:
   ]
 }}
 
-Only include the tools that make sense for this specific role. Don't use all tools for everyone."""
+Include a comprehensive set of tools. For most roles, you should include:
+- Equipment provisioning
+- System access (GitHub for engineers, CRM for sales, Asana for marketing)
+- Training courses (role-based)
+- Security training (mandatory for all)
+- Benefits enrollment
+- Welcome communications
+- Follow-up verification
+
+Don't use all tools for everyone - be thoughtful about what's relevant."""
 
         response = self.client.models.generate_content(
             model=self.model,
             contents=planning_prompt,
-            config=types.GenerateContentConfig(
-                temperature=0.7,
-                response_mime_type="application/json",
-            )
+            config={
+                "temperature": 0.7,
+                "response_mime_type": "application/json",
+            }
         )
         
         plan = json.loads(response.text)
@@ -171,9 +200,11 @@ Only include the tools that make sense for this specific role. Don't use all too
                     params["employee_name"] = employee_name
                 if "role" not in params:
                     params["role"] = role
+                if "department" not in params:
+                    params["department"] = department
                 if "email" not in params:
                     params["email"] = email
-                if "start_date" not in params and tool_name in ["schedule_meeting", "send_welcome_email"]:
+                if "start_date" not in params and tool_name in ["schedule_meeting", "send_welcome_email", "enroll_in_benefits"]:
                     params["start_date"] = start_date
                 if "manager" not in params:
                     params["manager"] = manager
@@ -198,6 +229,16 @@ Only include the tools that make sense for this specific role. Don't use all too
         # Step 3: Final summary
         yield {
             "type": "workflow_complete",
-            "message": f"Onboarding workflow completed for {employee_name}",
+            "message": f"Comprehensive onboarding workflow completed for {employee_name}",
             "total_steps": len(plan["steps"])
         }
+    
+    def chat(self, employee_name: str, question: str, context: dict = None) -> dict:
+        """
+        Answer onboarding questions using the chatbot tool.
+        """
+        return answer_onboarding_question(
+            employee_name=employee_name,
+            question=question,
+            context=context
+        )

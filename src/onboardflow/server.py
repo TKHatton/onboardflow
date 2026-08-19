@@ -39,6 +39,13 @@ class NewHireRequest(BaseModel):
     manager: str | None = None
 
 
+class ChatRequest(BaseModel):
+    """Chat question payload."""
+    employee_name: str
+    question: str
+    context: dict | None = None
+
+
 @app.get("/")
 async def root():
     """Health check."""
@@ -109,6 +116,23 @@ async def stream_onboarding(request: NewHireRequest):
             "X-Accel-Buffering": "no",  # Disable nginx buffering
         }
     )
+
+
+@app.post("/api/chat")
+async def chat(request: ChatRequest):
+    """
+    Answer onboarding questions using the chatbot.
+    """
+    try:
+        agent = AutonomousAgent()
+        response = agent.chat(
+            employee_name=request.employee_name,
+            question=request.question,
+            context=request.context
+        )
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 if __name__ == "__main__":
