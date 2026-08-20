@@ -74,25 +74,35 @@ async def start_onboarding(request: NewHireRequest):
     }
 
 
-@app.post("/api/onboard/stream")
-async def stream_onboarding(request: NewHireRequest):
+@app.get("/api/onboard/stream")
+async def stream_onboarding(
+    employee_name: str,
+    role: str,
+    department: str,
+    start_date: str,
+    email: str,
+    manager: str | None = None,
+):
     """
     Start onboarding workflow and stream updates via SSE.
     This is the main endpoint for the React frontend.
+
+    GET + query params because the frontend uses the browser's native
+    EventSource API, which can only issue GET requests.
     """
-    
+
     async def event_generator() -> AsyncGenerator[str, None]:
         """Generate SSE events from autonomous agent."""
         try:
             agent = AutonomousAgent()
-            
+
             async for update in agent.plan_onboarding(
-                employee_name=request.employee_name,
-                role=request.role,
-                department=request.department,
-                start_date=request.start_date,
-                email=request.email,
-                manager=request.manager,
+                employee_name=employee_name,
+                role=role,
+                department=department,
+                start_date=start_date,
+                email=email,
+                manager=manager,
             ):
                 # Format as SSE
                 yield f"data: {json.dumps(update)}\n\n"
