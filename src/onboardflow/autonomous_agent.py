@@ -2,6 +2,8 @@
 
 import os
 import json
+import inspect
+from datetime import datetime
 from typing import AsyncGenerator
 from google import genai
 
@@ -24,7 +26,28 @@ from .tools import (
 
 class AutonomousAgent:
     """Autonomous agent that plans and executes onboarding workflows."""
-    
+
+    # Parameter names Gemini tends to invent, mapped onto the names the tool
+    # functions actually declare.
+    PARAM_ALIASES = {
+        "employee_email": "email",
+        "user_email": "email",
+        "recipient_email": "to_email",
+        "recipient": "to_email",
+        "hire_date": "start_date",
+        "first_day": "start_date",
+        "supervisor": "manager",
+        "reporting_manager": "manager",
+        "meeting_time": "start_time",
+        "meeting_date": "start_time",
+        "meeting_title": "title",
+        "subject": "title",
+        "participants": "attendees",
+        "attendee_list": "attendees",
+        "invitees": "attendees",
+        "duration": "duration_minutes",
+    }
+
     def __init__(self):
         api_key = os.getenv("GOOGLE_API_KEY")
         if not api_key:
@@ -89,6 +112,112 @@ class AutonomousAgent:
             },
         }
     
+    def _tool_catalog(self) -> str:
+        """Describe each tool to Gemini with its real parameter names.
+
+        Without this the prompt lists only prose descriptions, so Gemini has to
+        guess parameter names and frequently guesses wrong.
+        """
+        lines = []
+        for name, info in self.tools.items():
+            sig = inspect.signature(info["func"])
+            required, optional = [], []
+            for param_name, param in sig.parameters.items():
+                if param.default is inspect.Parameter.empty:
+                    required.append(param_name)
+                else:
+                    optional.append(param_name)
+            detail = f"required: {', '.join(required)}" if required else "no required parameters"
+            if optional:
+                detail += f"; optional: {', '.join(optional)}"
+            lines.append(f'- {name}: {info["description"]} ({detail})')
+        return chr(10).join(lines)
+
+    @staticmethod
+    def _parameter_fallbacks(
+        employee_name: str,
+        role: str,
+        department: str,
+        start_date: str,
+        email: str,
+        manager: str | None,
+    ) -> dict:
+        """Values to fill in for any tool parameter Gemini leaves out.
+
+        Keyed by the parameter names the tools declare, so filling is driven by
+        each tool's signature instead of a hand-maintained per-tool list.
+        """
+        channel = f"#{department.lower().replace(' ', '-')}" if department else "#general"
+        return {
+            "employee_name": employee_name,
+            "role": role,
+            "department": department,
+            "email": email,
+            "to_email": email,
+            "start_date": start_date,
+            "manager": manager,
+            "manager_name": manager,
+            "title": f"Orientation: {employee_name}",
+            "attendees": [addr for addr in (email,) if addr],
+            "start_time": f"{start_date}T09:00:00",
+            "channel": channel,
+            "message": (
+                f"Welcome {employee_name} to the team as our new {role}!"
+            ),
+        }
+
+    @staticmethod
+    def _coerce_params(params: dict, start_date: str, email: str) -> dict:
+        """Reshape Gemini's values into what the tools expect.
+
+        Gemini returns a plausible-looking value for the right key often enough
+        that the tools fail on shape rather than absence: a bare string where a
+        list of attendees belongs, or a date where a full timestamp does.
+        """
+        coerced = dict(params)
+
+        if "attendees" in coerced:
+            attendees = coerced["attendees"]
+            if isinstance(attendees, str):
+                attendees = [attendees]
+            elif not isinstance(attendees, list):
+                attendees = list(attendees or [])
+            coerced["attendees"] = [a for a in attendees if a] or [email]
+
+        if "start_time" in coerced:
+            coerced["start_time"] = AutonomousAgent._coerce_start_time(
+                coerced["start_time"], start_date
+            )
+
+        if "duration_minutes" in coerced:
+            try:
+                coerced["duration_minutes"] = int(coerced["duration_minutes"])
+            except (TypeError, ValueError):
+                coerced.pop("duration_minutes")
+
+        return coerced
+
+    @staticmethod
+    def _coerce_start_time(value, start_date: str) -> str:
+        """Return an ISO timestamp the calendar tool can parse.
+
+        schedule_meeting calls datetime.fromisoformat on this, which raises on a
+        bare time or free text, so anything unparseable falls back to 9am on the
+        employee's start date.
+        """
+        default = f"{start_date}T09:00:00"
+        if not isinstance(value, str) or not value.strip():
+            return default
+        candidate = value.strip().replace("Z", "+00:00").replace(" ", "T", 1)
+        try:
+            parsed = datetime.fromisoformat(candidate)
+        except ValueError:
+            return default
+        # A date with no time parses to midnight; use business hours instead.
+        if parsed.hour == 0 and parsed.minute == 0 and "T" not in candidate:
+            return f"{parsed.date().isoformat()}T09:00:00"
+        return parsed.isoformat()
+
     async def plan_onboarding(
         self,
         employee_name: str,
@@ -119,8 +248,8 @@ New Hire Details:
 - Email: {email}
 - Manager: {manager or 'Not specified'}
 
-Available tools:
-{chr(10).join(f'- {name}: {info["description"]}' for name, info in self.tools.items())}
+Available tools (use these exact parameter names):
+{self._tool_catalog()}
 
 Decide which tools to use and in what order. Consider:
 - What systems does this role need access to?
@@ -194,48 +323,52 @@ Don't use all tools for everyone - be thoughtful about what's relevant."""
             try:
                 tool_func = self.tools[tool_name]["func"]
                 params = step_data.get("parameters", {})
-                
-                # Normalize parameter names
-                param_mapping = {
-                    "employee_email": "email",
-                    "recipient_email": "to_email",
-                    "user_email": "email",
-                    "hire_date": "start_date",
-                    "first_day": "start_date",
-                    "supervisor": "manager",
-                    "reporting_manager": "manager",
+
+                # Gemini invents its own parameter names, so map the common
+                # variations onto the names the tool functions actually declare.
+                normalized_params = {
+                    self.PARAM_ALIASES.get(key, key): value
+                    for key, value in params.items()
                 }
-                
-                # Apply mapping
-                normalized_params = {}
-                for key, value in params.items():
-                    mapped_key = param_mapping.get(key, key)
-                    normalized_params[mapped_key] = value
-                
-                # Add common parameters if not present
-                if "employee_name" not in normalized_params:
-                    normalized_params["employee_name"] = employee_name
-                if "role" not in normalized_params:
-                    normalized_params["role"] = role
-                if "department" not in normalized_params:
-                    normalized_params["department"] = department
-                if "email" not in normalized_params:
-                    normalized_params["email"] = email
-                if "start_date" not in normalized_params and tool_name in ["schedule_meeting", "send_welcome_email", "enroll_in_benefits"]:
-                    normalized_params["start_date"] = start_date
-                if "manager" not in normalized_params:
-                    normalized_params["manager"] = manager
-                
-                # Filter to only accepted parameters
-                import inspect
+
+                # Fill anything the tool needs that Gemini did not supply.
+                # Driven off each tool's real signature rather than a per-tool
+                # list, so a tool that declares to_email/attendees/start_time
+                # gets them the same way one declaring email/start_date does.
+                fallbacks = self._parameter_fallbacks(
+                    employee_name, role, department, start_date, email, manager
+                )
                 sig = inspect.signature(tool_func)
-                valid_params = {}
-                for param_name, param_value in normalized_params.items():
-                    if param_name in sig.parameters:
-                        valid_params[param_name] = param_value
-                
+                for param_name in sig.parameters:
+                    if param_name not in normalized_params and param_name in fallbacks:
+                        normalized_params[param_name] = fallbacks[param_name]
+
+                # Drop anything this tool does not accept, then coerce the
+                # values Gemini does send into the shapes the tools expect.
+                valid_params = {
+                    name: value
+                    for name, value in normalized_params.items()
+                    if name in sig.parameters
+                }
+                valid_params = self._coerce_params(valid_params, start_date, email)
+
+                missing = [
+                    name
+                    for name, param in sig.parameters.items()
+                    if param.default is inspect.Parameter.empty
+                    and name not in valid_params
+                ]
+                if missing:
+                    yield {
+                        "type": "step_error",
+                        "step": i,
+                        "tool": tool_name,
+                        "message": f"Missing required parameter(s): {', '.join(missing)}"
+                    }
+                    continue
+
                 result = tool_func(**valid_params)
-                
+
                 yield {
                     "type": "step_complete",
                     "step": i,
