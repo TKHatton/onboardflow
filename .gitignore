@@ -45,6 +45,3 @@ credentials.json
 
 # Logs
 *.log
-
-# Test Reports (generated, not tracked)
-TEST_REPORT.md
