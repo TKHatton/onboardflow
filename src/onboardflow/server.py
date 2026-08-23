@@ -145,6 +145,65 @@ async def chat(request: ChatRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.post("/api/pubsub/push")
+async def pubsub_push(request: Request):
+    """
+    Pub/Sub push endpoint - receives new hire events from Pub/Sub topic.
+    This enables event-driven architecture where HR systems can publish
+    new hire events to Pub/Sub, triggering automated onboarding.
+    """
+    try:
+        # Parse Pub/Sub message
+        envelope = await request.json()
+        
+        if not envelope or "message" not in envelope:
+            raise HTTPException(status_code=400, detail="Invalid Pub/Sub message format")
+        
+        message = envelope["message"]
+        
+        # Decode the message data (base64 encoded)
+        import base64
+        if "data" in message:
+            data = base64.b64decode(message["data"]).decode("utf-8")
+            new_hire = json.loads(data)
+        else:
+            raise HTTPException(status_code=400, detail="No data in Pub/Sub message")
+        
+        # Validate required fields
+        required_fields = ["employee_name", "role", "department", "start_date", "email"]
+        for field in required_fields:
+            if field not in new_hire:
+                raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
+        
+        # Trigger onboarding workflow
+        agent = AutonomousAgent()
+        
+        # Run the workflow (in production, you'd want to do this async)
+        workflow_id = f"workflow-{new_hire['employee_name'].lower().replace(' ', '-')}-{int(asyncio.get_event_loop().time())}"
+        
+        # Execute workflow
+        async for update in agent.plan_onboarding(
+            employee_name=new_hire["employee_name"],
+            role=new_hire["role"],
+            department=new_hire["department"],
+            start_date=new_hire["start_date"],
+            email=new_hire["email"],
+            manager=new_hire.get("manager"),
+        ):
+            # Log each step (in production, persist to database)
+            print(f"[{workflow_id}] {update}")
+        
+        # Return 200 to acknowledge the message
+        return {"status": "success", "workflow_id": workflow_id}
+        
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="Invalid JSON in message data")
+    except Exception as e:
+        print(f"Error processing Pub/Sub message: {e}")
+        # Return 500 to trigger Pub/Sub retry
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 if __name__ == "__main__":
     port = int(os.getenv("PORT", "8000"))
     uvicorn.run(app, host="0.0.0.0", port=port)
