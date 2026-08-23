@@ -31,7 +31,7 @@ class AutonomousAgent:
             raise ValueError("GOOGLE_API_KEY environment variable not set")
         
         self.client = genai.Client(api_key=api_key)
-        self.model = "gemini-2.0-flash-exp"
+        self.model = "gemini-3.6-flash"
         
         # Available tools with descriptions
         self.tools = {
@@ -195,21 +195,46 @@ Don't use all tools for everyone - be thoughtful about what's relevant."""
                 tool_func = self.tools[tool_name]["func"]
                 params = step_data.get("parameters", {})
                 
-                # Add common parameters if not present
-                if "employee_name" not in params:
-                    params["employee_name"] = employee_name
-                if "role" not in params:
-                    params["role"] = role
-                if "department" not in params:
-                    params["department"] = department
-                if "email" not in params:
-                    params["email"] = email
-                if "start_date" not in params and tool_name in ["schedule_meeting", "send_welcome_email", "enroll_in_benefits"]:
-                    params["start_date"] = start_date
-                if "manager" not in params:
-                    params["manager"] = manager
+                # Normalize parameter names
+                param_mapping = {
+                    "employee_email": "email",
+                    "recipient_email": "to_email",
+                    "user_email": "email",
+                    "hire_date": "start_date",
+                    "first_day": "start_date",
+                    "supervisor": "manager",
+                    "reporting_manager": "manager",
+                }
                 
-                result = tool_func(**params)
+                # Apply mapping
+                normalized_params = {}
+                for key, value in params.items():
+                    mapped_key = param_mapping.get(key, key)
+                    normalized_params[mapped_key] = value
+                
+                # Add common parameters if not present
+                if "employee_name" not in normalized_params:
+                    normalized_params["employee_name"] = employee_name
+                if "role" not in normalized_params:
+                    normalized_params["role"] = role
+                if "department" not in normalized_params:
+                    normalized_params["department"] = department
+                if "email" not in normalized_params:
+                    normalized_params["email"] = email
+                if "start_date" not in normalized_params and tool_name in ["schedule_meeting", "send_welcome_email", "enroll_in_benefits"]:
+                    normalized_params["start_date"] = start_date
+                if "manager" not in normalized_params:
+                    normalized_params["manager"] = manager
+                
+                # Filter to only accepted parameters
+                import inspect
+                sig = inspect.signature(tool_func)
+                valid_params = {}
+                for param_name, param_value in normalized_params.items():
+                    if param_name in sig.parameters:
+                        valid_params[param_name] = param_value
+                
+                result = tool_func(**valid_params)
                 
                 yield {
                     "type": "step_complete",
