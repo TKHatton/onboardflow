@@ -8,267 +8,190 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background: #0a0e27;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #0f1419;
   color: #e6edf3;
   min-height: 100vh;
-  padding: 2rem;
+  padding: 3rem 2rem;
   line-height: 1.6;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .container {
   width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  background: rgba(13, 17, 23, 0.95);
-  border-radius: 20px;
+  max-width: 1200px;
+  background: #161b22;
+  border-radius: 16px;
   padding: 3rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
+  border: 1px solid #21262d;
 }
 
 h1 {
   text-align: center;
-  font-size: 3rem;
+  font-size: 2.5rem;
   margin-bottom: 0.5rem;
-  color: #00d4ff;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: -0.03em;
 }
 
 .subtitle {
   text-align: center;
-  color: #8b949e;
+  color: #7d8590;
   margin-bottom: 3rem;
-  font-size: 1.1rem;
-  font-weight: 300;
+  font-size: 1rem;
+  font-weight: 400;
 }
 
 .architecture {
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  align-items: center;
 }
 
 .layer {
   display: flex;
-  align-items: stretch;
-  gap: 1.5rem;
-  transition: transform 0.3s ease;
-}
-
-.layer:hover {
-  transform: translateX(10px);
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+  max-width: 900px;
 }
 
 .layer-label {
-  width: 140px;
-  font-size: 0.85rem;
+  width: 120px;
+  font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: #00d4ff;
+  letter-spacing: 0.1em;
+  color: #7d8590;
   text-align: right;
   flex-shrink: 0;
-  padding-top: 1.5rem;
   font-weight: 600;
 }
 
 .layer-content {
   flex: 1;
   display: flex;
-  gap: 1.5rem;
-  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .node {
-  background: linear-gradient(135deg, #161b22 0%, #1c2128 100%);
-  border: 2px solid #30363d;
-  border-radius: 12px;
-  padding: 1.5rem;
-  min-width: 200px;
-  flex: 1;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.node::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #00d4ff 0%, #0099cc 100%);
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 1.5rem 2rem;
+  min-width: 280px;
+  transition: all 0.2s ease;
+  text-align: center;
 }
 
 .node:hover {
-  border-color: #00d4ff;
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
-}
-
-.node:hover::before {
-  transform: scaleX(1);
+  border-color: #58a6ff;
+  transform: translateY(-2px);
 }
 
 .node.highlight {
-  border-color: #00ff88;
-  background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
-}
-
-.node.highlight::before {
-  background: linear-gradient(90deg, #00ff88 0%, #00cc6a 100%);
+  border-color: #3fb950;
+  background: #0d1117;
 }
 
 .node.gcp {
   border-color: #4285f4;
 }
 
-.node.gcp::before {
-  background: linear-gradient(90deg, #4285f4 0%, #34a853 100%);
-}
-
-.node.agent {
-  border-color: #00ff88;
-}
-
 .node-icon {
   font-size: 2rem;
   margin-bottom: 0.75rem;
-  display: inline-block;
-  transition: transform 0.3s ease;
-}
-
-.node:hover .node-icon {
-  transform: scale(1.2) rotate(5deg);
 }
 
 .node-title {
-  font-weight: 700;
-  font-size: 1.1rem;
+  font-weight: 600;
+  font-size: 1rem;
   margin-bottom: 0.5rem;
   color: #ffffff;
 }
 
 .node-desc {
   font-size: 0.85rem;
-  color: #8b949e;
-  line-height: 1.6;
+  color: #7d8590;
+  line-height: 1.5;
 }
 
 .arrow {
   text-align: center;
-  color: #00d4ff;
-  font-size: 2rem;
+  color: #30363d;
+  font-size: 1.5rem;
   padding: 0.5rem 0;
-  animation: bounce 2s infinite;
-}
-
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(5px); }
 }
 
 .badge {
   display: inline-block;
   font-size: 0.7rem;
   padding: 0.25rem 0.75rem;
-  border-radius: 20px;
+  border-radius: 12px;
   background: #21262d;
-  color: #e6edf3;
+  color: #7d8590;
   margin-top: 0.75rem;
   margin-right: 0.5rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 500;
 }
 
 .badge.gemini { 
-  background: linear-gradient(135deg, #1a3a2a 0%, #0d2818 100%);
-  color: #00ff88;
-  border-color: #00ff88;
+  background: #1a2e1a;
+  color: #3fb950;
 }
 
 .badge.adk { 
-  background: linear-gradient(135deg, #1a2a3a 0%, #0d1f2d 100%);
-  color: #00d4ff;
-  border-color: #00d4ff;
+  background: #1a2a3a;
+  color: #58a6ff;
 }
 
 .badge.firestore { 
-  background: linear-gradient(135deg, #2a1a3a 0%, #1f0d2d 100%);
-  color: #ff6b9d;
-  border-color: #ff6b9d;
+  background: #2a1a3a;
+  color: #bc8cff;
 }
 
 .badge.pubsub { 
-  background: linear-gradient(135deg, #3a2a1a 0%, #2d1f0d 100%);
-  color: #ffa500;
-  border-color: #ffa500;
+  background: #3a2a1a;
+  color: #f0883e;
 }
 
 .badge.cloudrun { 
-  background: linear-gradient(135deg, #1a3a3a 0%, #0d2d2d 100%);
-  color: #00d4ff;
-  border-color: #00d4ff;
+  background: #1a3a3a;
+  color: #39d2c0;
 }
 
 .tools-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
   width: 100%;
+  max-width: 900px;
 }
 
 .tool-node {
-  background: linear-gradient(135deg, #161b22 0%, #1c2128 100%);
-  border: 2px solid #30363d;
-  border-radius: 10px;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 8px;
   padding: 1.25rem;
   text-align: center;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.tool-node::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #00d4ff 0%, #0099cc 100%);
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .tool-node:hover {
-  border-color: #00d4ff;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 212, 255, 0.15);
-}
-
-.tool-node:hover::after {
-  transform: scaleX(1);
+  border-color: #58a6ff;
+  transform: translateY(-2px);
 }
 
 .tool-logo { 
-  width: 48px;
-  height: 48px;
-  margin: 0 auto 0.75rem;
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.3s ease;
-}
-
-.tool-node:hover .tool-logo {
-  transform: scale(1.15);
 }
 
 .tool-logo svg {
@@ -277,16 +200,16 @@ h1 {
 }
 
 .tool-name { 
-  font-size: 0.9rem;
-  font-weight: 700;
+  font-size: 0.85rem;
+  font-weight: 600;
   color: #ffffff;
   margin-bottom: 0.25rem;
 }
 
 .tool-type {
-  font-size: 0.75rem;
-  color: #8b949e;
-  font-weight: 500;
+  font-size: 0.7rem;
+  color: #7d8590;
+  font-weight: 400;
 }
 
 .legend {
@@ -296,44 +219,45 @@ h1 {
   margin-top: 3rem;
   flex-wrap: wrap;
   padding: 1.5rem;
-  background: rgba(22, 27, 34, 0.5);
-  border-radius: 12px;
-  border: 1px solid #30363d;
+  background: #0d1117;
+  border-radius: 8px;
+  border: 1px solid #21262d;
+  max-width: 900px;
+  width: 100%;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  font-size: 0.85rem;
-  color: #e6edf3;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: #7d8590;
   font-weight: 500;
 }
 
 .legend-dot {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  box-shadow: 0 0 10px currentColor;
 }
 
 @media (max-width: 768px) {
   .container {
-    padding: 1.5rem;
+    padding: 2rem 1.5rem;
   }
   
   h1 {
-    font-size: 2rem;
+    font-size: 1.75rem;
   }
   
   .layer {
     flex-direction: column;
+    gap: 1rem;
   }
   
   .layer-label {
     width: 100%;
-    text-align: left;
-    padding-top: 0;
+    text-align: center;
   }
   
   .tools-grid {
@@ -382,7 +306,7 @@ h1 {
     <div class="layer">
       <div class="layer-label">Agent</div>
       <div class="layer-content">
-        <div class="node agent highlight">
+        <div class="node highlight">
           <div class="node-icon">🤖</div>
           <div class="node-title">OnboardFlow Agent</div>
           <div class="node-desc">Orchestrates multi-step onboarding workflow<br>Decides execution order, handles failures, tracks state</div>
@@ -437,8 +361,8 @@ h1 {
           <div class="tool-node">
             <div class="tool-logo">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 6C2 4.89543 2.89543 4 4 4H20C21.1046 4 22 4.89543 22 6V18C22 19.1046 21.1046 20 20 20H4C2.89543 20 2 19.1046 2 18V6Z" stroke="#00d4ff" stroke-width="2"/>
-                <path d="M2 6L12 13L22 6" stroke="#00d4ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 6C2 4.89543 2.89543 4 4 4H20C21.1046 4 22 4.89543 22 6V18C22 19.1046 21.1046 20 20 20H4C2.89543 20 2 19.1046 2 18V6Z" stroke="#7d8590" stroke-width="2"/>
+                <path d="M2 6L12 13L22 6" stroke="#7d8590" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
             <div class="tool-name">Email</div>
@@ -460,8 +384,8 @@ h1 {
           <div class="tool-node">
             <div class="tool-logo">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#00d4ff" stroke-width="2"/>
-                <path d="M7 8H17M7 12H17M7 16H13" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
+                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#7d8590" stroke-width="2"/>
+                <path d="M7 8H17M7 12H17M7 16H13" stroke="#7d8590" stroke-width="2" stroke-linecap="round"/>
               </svg>
             </div>
             <div class="tool-name">CRM</div>
@@ -485,7 +409,7 @@ h1 {
           <div class="tool-node">
             <div class="tool-logo">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 14L16 10L12 6M12 14L8 10L12 6M12 14V22M4 18H20C20 18 20 14 12 10C4 14 4 18 4 18Z" stroke="#00d4ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 14L16 10L12 6M12 14L8 10L12 6M12 14V22M4 18H20C20 18 20 14 12 10C4 14 4 18 4 18Z" stroke="#7d8590" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
             <div class="tool-name">Training</div>
@@ -496,8 +420,8 @@ h1 {
           <div class="tool-node">
             <div class="tool-logo">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L3 7V12C3 17.55 6.84 22.74 12 24C17.16 22.74 21 17.55 21 12V7L12 2Z" stroke="#00d4ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M9 12L11 14L15 10" stroke="#00d4ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 2L3 7V12C3 17.55 6.84 22.74 12 24C17.16 22.74 21 17.55 21 12V7L12 2Z" stroke="#7d8590" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9 12L11 14L15 10" stroke="#7d8590" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
             <div class="tool-name">Security</div>
@@ -508,7 +432,7 @@ h1 {
           <div class="tool-node">
             <div class="tool-logo">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 1V23M17 5H9.5C8.57174 5 7.6815 5.36875 7.02513 6.02513C6.36875 6.6815 6 7.57174 6 8.5C6 9.42826 6.36875 10.3185 7.02513 10.9749C7.6815 11.6313 8.57174 12 9.5 12H14.5C15.4283 12 16.3185 12.3687 16.9749 13.0251C17.6313 13.6815 18 14.5717 18 15.5C18 16.4283 17.6313 17.3185 16.9749 17.9749C16.3185 18.6313 15.4283 19 14.5 19H6" stroke="#00d4ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 1V23M17 5H9.5C8.57174 5 7.6815 5.36875 7.02513 6.02513C6.36875 6.6815 6 7.57174 6 8.5C6 9.42826 6.36875 10.3185 7.02513 10.9749C7.6815 11.6313 8.57174 12 9.5 12H14.5C15.4283 12 16.3185 12.3687 16.9749 13.0251C17.6313 13.6815 18 14.5717 18 15.5C18 16.4283 17.6313 17.3185 16.9749 17.9749C16.3185 18.6313 15.4283 19 14.5 19H6" stroke="#7d8590" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
             <div class="tool-name">Benefits</div>
@@ -519,8 +443,8 @@ h1 {
           <div class="tool-node">
             <div class="tool-logo">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="2" y="3" width="20" height="14" rx="2" stroke="#00d4ff" stroke-width="2"/>
-                <path d="M8 21H16M12 17V21" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
+                <rect x="2" y="3" width="20" height="14" rx="2" stroke="#7d8590" stroke-width="2"/>
+                <path d="M8 21H16M12 17V21" stroke="#7d8590" stroke-width="2" stroke-linecap="round"/>
               </svg>
             </div>
             <div class="tool-name">Equipment</div>
@@ -531,7 +455,7 @@ h1 {
           <div class="tool-node">
             <div class="tool-logo">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#00d4ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#7d8590" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
             <div class="tool-name">Verification</div>
@@ -559,9 +483,9 @@ h1 {
 
   <div class="legend">
     <div class="legend-item"><div class="legend-dot" style="background:#4285f4"></div> Google Cloud Service</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#00ff88"></div> AI Agent (Gemini 3.6 + ADK)</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#ffa500"></div> Event Trigger</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#ff6b9d"></div> State Management</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#3fb950"></div> AI Agent (Gemini 3.6 + ADK)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f0883e"></div> Event Trigger</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#bc8cff"></div> State Management</div>
   </div>
 </div>
 </body>
