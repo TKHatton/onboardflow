@@ -9,7 +9,7 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #0a0e27;
   color: #e6edf3;
   min-height: 100vh;
   padding: 2rem;
@@ -31,10 +31,7 @@ h1 {
   text-align: center;
   font-size: 3rem;
   margin-bottom: 0.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #00d4ff;
   font-weight: 800;
   letter-spacing: -0.02em;
 }
@@ -69,7 +66,7 @@ h1 {
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.15em;
-  color: #58a6ff;
+  color: #00d4ff;
   text-align: right;
   flex-shrink: 0;
   padding-top: 1.5rem;
@@ -102,15 +99,15 @@ h1 {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(90deg, #00d4ff 0%, #0099cc 100%);
   transform: scaleX(0);
   transition: transform 0.3s ease;
 }
 
 .node:hover {
-  border-color: #58a6ff;
+  border-color: #00d4ff;
   transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(88, 166, 255, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
 }
 
 .node:hover::before {
@@ -118,12 +115,12 @@ h1 {
 }
 
 .node.highlight {
-  border-color: #34d058;
+  border-color: #00ff88;
   background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
 }
 
 .node.highlight::before {
-  background: linear-gradient(90deg, #34d058 0%, #2ea043 100%);
+  background: linear-gradient(90deg, #00ff88 0%, #00cc6a 100%);
 }
 
 .node.gcp {
@@ -135,7 +132,7 @@ h1 {
 }
 
 .node.agent {
-  border-color: #34d058;
+  border-color: #00ff88;
 }
 
 .node-icon {
@@ -164,7 +161,7 @@ h1 {
 
 .arrow {
   text-align: center;
-  color: #58a6ff;
+  color: #00d4ff;
   font-size: 2rem;
   padding: 0.5rem 0;
   animation: bounce 2s infinite;
@@ -192,32 +189,32 @@ h1 {
 
 .badge.gemini { 
   background: linear-gradient(135deg, #1a3a2a 0%, #0d2818 100%);
-  color: #34d058;
-  border-color: #34d058;
+  color: #00ff88;
+  border-color: #00ff88;
 }
 
 .badge.adk { 
   background: linear-gradient(135deg, #1a2a3a 0%, #0d1f2d 100%);
-  color: #58a6ff;
-  border-color: #58a6ff;
+  color: #00d4ff;
+  border-color: #00d4ff;
 }
 
 .badge.firestore { 
   background: linear-gradient(135deg, #2a1a3a 0%, #1f0d2d 100%);
-  color: #bc8cff;
-  border-color: #bc8cff;
+  color: #ff6b9d;
+  border-color: #ff6b9d;
 }
 
 .badge.pubsub { 
   background: linear-gradient(135deg, #3a2a1a 0%, #2d1f0d 100%);
-  color: #f0883e;
-  border-color: #f0883e;
+  color: #ffa500;
+  border-color: #ffa500;
 }
 
 .badge.cloudrun { 
   background: linear-gradient(135deg, #1a3a3a 0%, #0d2d2d 100%);
-  color: #39d2c0;
-  border-color: #39d2c0;
+  color: #00d4ff;
+  border-color: #00d4ff;
 }
 
 .tools-grid {
@@ -245,30 +242,38 @@ h1 {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(90deg, #00d4ff 0%, #0099cc 100%);
   transform: scaleX(0);
   transition: transform 0.3s ease;
 }
 
 .tool-node:hover {
-  border-color: #58a6ff;
+  border-color: #00d4ff;
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(88, 166, 255, 0.15);
+  box-shadow: 0 8px 20px rgba(0, 212, 255, 0.15);
 }
 
 .tool-node:hover::after {
   transform: scaleX(1);
 }
 
-.tool-icon { 
-  font-size: 1.75rem;
-  margin-bottom: 0.5rem;
-  display: inline-block;
+.tool-logo { 
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: transform 0.3s ease;
 }
 
-.tool-node:hover .tool-icon {
+.tool-node:hover .tool-logo {
   transform: scale(1.15);
+}
+
+.tool-logo svg {
+  width: 100%;
+  height: 100%;
 }
 
 .tool-name { 
@@ -394,63 +399,141 @@ h1 {
       <div class="layer-label">MCP Tools</div>
       <div class="layer-content">
         <div class="tools-grid">
+          <!-- Jira -->
           <div class="tool-node">
-            <div class="tool-icon">🎫</div>
+            <div class="tool-logo">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M23.304 12.692a.684.684 0 00-.018-.145c-.016-.06-.036-.12-.06-.176a.994.994 0 00-.07-.142c-.033-.05-.07-.098-.11-.142-.04-.044-.083-.085-.13-.122-.046-.037-.096-.07-.148-.1a.936.936 0 00-.327-.112c-.057-.01-.115-.015-.173-.015H12.5l-2.27-2.27a.68.68 0 00-.96 0l-2.27 2.27H2.27c-.058 0-.116.005-.173.015-.057.01-.112.027-.165.05-.053.022-.104.05-.15.083-.047.033-.09.07-.13.11-.04.04-.076.084-.108.13-.032.047-.06.096-.082.148-.023.052-.04.107-.052.163-.012.056-.02.114-.02.172v9.32c0 .058.008.116.02.172.012.056.03.11.052.163.023.052.05.101.082.148.032.046.068.09.108.13.04.04.083.077.13.11.046.033.097.06.15.083.053.023.108.04.165.05.057.01.115.015.173.015h9.32c.058 0 .116-.005.173-.015.057-.01.112-.027.165-.05.053-.022.104-.05.15-.083.047-.033.09-.07.13-.11.04-.04.076-.084.108-.13.032-.047.06-.096.082-.148.023-.052.04-.107.052-.163.012-.056.02-.114.02-.172v-4.65l2.27-2.27a.68.68 0 000-.96l-2.27-2.27h4.65c.058 0 .116-.005.173-.015.057-.01.112-.027.165-.05.053-.022.104-.05.15-.083.047-.033.09-.07.13-.11.04-.04.076-.084.108-.13.032-.047.06-.096.082-.148.023-.052.04-.107.052-.163.012-.056.02-.114.02-.172v-2.27z" fill="#0052CC"/>
+              </svg>
+            </div>
             <div class="tool-name">Jira</div>
             <div class="tool-type">Create ticket</div>
           </div>
+          
+          <!-- Slack -->
           <div class="tool-node">
-            <div class="tool-icon">💬</div>
+            <div class="tool-logo">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z" fill="#36C5F0"/>
+              </svg>
+            </div>
             <div class="tool-name">Slack</div>
             <div class="tool-type">Welcome msg</div>
           </div>
+          
+          <!-- Google Calendar -->
           <div class="tool-node">
-            <div class="tool-icon">📅</div>
+            <div class="tool-logo">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7.000 0C5.343 0 4.000 1.343 4.000 3.000V4.000H3.000C1.343 4.000 0 5.343 0 7.000V21.000C0 22.657 1.343 24.000 3.000 24.000H17.000C18.657 24.000 20.000 22.657 20.000 21.000V20.000H21.000C22.657 20.000 24.000 18.657 24.000 17.000V3.000C24.000 1.343 22.657 0 21.000 0H7.000ZM7.000 2.000H21.000C21.552 2.000 22.000 2.448 22.000 3.000V17.000C22.000 17.552 21.552 18.000 21.000 18.000H20.000V7.000C20.000 5.343 18.657 4.000 17.000 4.000H6.000V3.000C6.000 2.448 6.448 2.000 7.000 2.000ZM3.000 6.000H17.000C17.552 6.000 18.000 6.448 18.000 7.000V21.000C18.000 21.552 17.552 22.000 17.000 22.000H3.000C2.448 22.000 2.000 21.552 2.000 21.000V7.000C2.000 6.448 2.448 6.000 3.000 6.000Z" fill="#4285F4"/>
+                <path d="M7.000 9.000C6.448 9.000 6.000 9.448 6.000 10.000V11.000C6.000 11.552 6.448 12.000 7.000 12.000H8.000C8.552 12.000 9.000 11.552 9.000 11.000V10.000C9.000 9.448 8.552 9.000 8.000 9.000H7.000ZM11.000 9.000C10.448 9.000 10.000 9.448 10.000 10.000V11.000C10.000 11.552 10.448 12.000 11.000 12.000H12.000C12.552 12.000 13.000 11.552 13.000 11.000V10.000C13.000 9.448 12.552 9.000 12.000 9.000H11.000ZM15.000 9.000C14.448 9.000 14.000 9.448 14.000 10.000V11.000C14.000 11.552 14.448 12.000 15.000 12.000H16.000C16.552 12.000 17.000 11.552 17.000 11.000V10.000C17.000 9.448 16.552 9.000 16.000 9.000H15.000ZM7.000 13.000C6.448 13.000 6.000 13.448 6.000 14.000V15.000C6.000 15.552 6.448 16.000 7.000 16.000H8.000C8.552 16.000 9.000 15.552 9.000 15.000V14.000C9.000 13.448 8.552 13.000 8.000 13.000H7.000ZM11.000 13.000C10.448 13.000 10.000 13.448 10.000 14.000V15.000C10.000 15.552 10.448 16.000 11.000 16.000H12.000C12.552 16.000 13.000 15.552 13.000 15.000V14.000C13.000 13.448 12.552 13.000 12.000 13.000H11.000Z" fill="#EA4335"/>
+              </svg>
+            </div>
             <div class="tool-name">Calendar</div>
             <div class="tool-type">Schedule mtg</div>
           </div>
+          
+          <!-- Email -->
           <div class="tool-node">
-            <div class="tool-icon">📧</div>
+            <div class="tool-logo">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 6C2 4.89543 2.89543 4 4 4H20C21.1046 4 22 4.89543 22 6V18C22 19.1046 21.1046 20 20 20H4C2.89543 20 2 19.1046 2 18V6Z" stroke="#00d4ff" stroke-width="2"/>
+                <path d="M2 6L12 13L22 6" stroke="#00d4ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
             <div class="tool-name">Email</div>
             <div class="tool-type">Welcome email</div>
           </div>
+          
+          <!-- GitHub -->
           <div class="tool-node">
-            <div class="tool-icon">🐙</div>
+            <div class="tool-logo">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 0C5.374 0 0 5.373 0 12 0 17.302 3.438 21.8 8.207 23.387c.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" fill="#ffffff"/>
+              </svg>
+            </div>
             <div class="tool-name">GitHub</div>
             <div class="tool-type">Create account</div>
           </div>
+          
+          <!-- CRM -->
           <div class="tool-node">
-            <div class="tool-icon">💼</div>
+            <div class="tool-logo">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="3" width="18" height="18" rx="2" stroke="#00d4ff" stroke-width="2"/>
+                <path d="M7 8H17M7 12H17M7 16H13" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
             <div class="tool-name">CRM</div>
             <div class="tool-type">Setup access</div>
           </div>
+          
+          <!-- Asana -->
           <div class="tool-node">
-            <div class="tool-icon">📊</div>
+            <div class="tool-logo">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="5" r="3" fill="#F06A6A"/>
+                <circle cx="5" cy="16" r="3" fill="#F06A6A"/>
+                <circle cx="19" cy="16" r="3" fill="#F06A6A"/>
+              </svg>
+            </div>
             <div class="tool-name">Asana</div>
             <div class="tool-type">Create project</div>
           </div>
+          
+          <!-- Training -->
           <div class="tool-node">
-            <div class="tool-icon">🎓</div>
+            <div class="tool-logo">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 14L16 10L12 6M12 14L8 10L12 6M12 14V22M4 18H20C20 18 20 14 12 10C4 14 4 18 4 18Z" stroke="#00d4ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
             <div class="tool-name">Training</div>
             <div class="tool-type">Assign courses</div>
           </div>
+          
+          <!-- Security -->
           <div class="tool-node">
-            <div class="tool-icon">🔒</div>
+            <div class="tool-logo">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L3 7V12C3 17.55 6.84 22.74 12 24C17.16 22.74 21 17.55 21 12V7L12 2Z" stroke="#00d4ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9 12L11 14L15 10" stroke="#00d4ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
             <div class="tool-name">Security</div>
             <div class="tool-type">Compliance</div>
           </div>
+          
+          <!-- Benefits -->
           <div class="tool-node">
-            <div class="tool-icon">💰</div>
+            <div class="tool-logo">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 1V23M17 5H9.5C8.57174 5 7.6815 5.36875 7.02513 6.02513C6.36875 6.6815 6 7.57174 6 8.5C6 9.42826 6.36875 10.3185 7.02513 10.9749C7.6815 11.6313 8.57174 12 9.5 12H14.5C15.4283 12 16.3185 12.3687 16.9749 13.0251C17.6313 13.6815 18 14.5717 18 15.5C18 16.4283 17.6313 17.3185 16.9749 17.9749C16.3185 18.6313 15.4283 19 14.5 19H6" stroke="#00d4ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
             <div class="tool-name">Benefits</div>
             <div class="tool-type">Enrollment</div>
           </div>
+          
+          <!-- Equipment -->
           <div class="tool-node">
-            <div class="tool-icon">💻</div>
+            <div class="tool-logo">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="3" width="20" height="14" rx="2" stroke="#00d4ff" stroke-width="2"/>
+                <path d="M8 21H16M12 17V21" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
             <div class="tool-name">Equipment</div>
             <div class="tool-type">Provision</div>
           </div>
+          
+          <!-- Verification -->
           <div class="tool-node">
-            <div class="tool-icon">✅</div>
+            <div class="tool-logo">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#00d4ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
             <div class="tool-name">Verification</div>
             <div class="tool-type">Follow-up</div>
           </div>
@@ -476,9 +559,9 @@ h1 {
 
   <div class="legend">
     <div class="legend-item"><div class="legend-dot" style="background:#4285f4"></div> Google Cloud Service</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#34d058"></div> AI Agent (Gemini 3.6 + ADK)</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#f0883e"></div> Event Trigger</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#bc8cff"></div> State Management</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#00ff88"></div> AI Agent (Gemini 3.6 + ADK)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ffa500"></div> Event Trigger</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ff6b9d"></div> State Management</div>
   </div>
 </div>
 </body>
