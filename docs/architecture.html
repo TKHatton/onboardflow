@@ -6,150 +6,341 @@
 <title>OnboardFlow Architecture</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #0d1117;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #e6edf3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   min-height: 100vh;
   padding: 2rem;
+  line-height: 1.6;
 }
+
 .container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: rgba(13, 17, 23, 0.95);
+  border-radius: 20px;
+  padding: 3rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
 }
+
 h1 {
   text-align: center;
-  font-size: 2rem;
+  font-size: 3rem;
   margin-bottom: 0.5rem;
-  color: #58a6ff;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
+
 .subtitle {
   text-align: center;
   color: #8b949e;
-  margin-bottom: 2rem;
-  font-size: 0.95rem;
+  margin-bottom: 3rem;
+  font-size: 1.1rem;
+  font-weight: 300;
 }
+
 .architecture {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 2rem;
 }
+
 .layer {
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  align-items: stretch;
+  gap: 1.5rem;
+  transition: transform 0.3s ease;
 }
+
+.layer:hover {
+  transform: translateX(10px);
+}
+
 .layer-label {
-  width: 120px;
-  font-size: 0.75rem;
+  width: 140px;
+  font-size: 0.85rem;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #8b949e;
+  letter-spacing: 0.15em;
+  color: #58a6ff;
   text-align: right;
   flex-shrink: 0;
+  padding-top: 1.5rem;
+  font-weight: 600;
 }
+
 .layer-content {
   flex: 1;
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   flex-wrap: wrap;
 }
+
 .node {
-  background: #161b22;
-  border: 1px solid #30363d;
-  border-radius: 8px;
-  padding: 1rem 1.25rem;
-  min-width: 180px;
+  background: linear-gradient(135deg, #161b22 0%, #1c2128 100%);
+  border: 2px solid #30363d;
+  border-radius: 12px;
+  padding: 1.5rem;
+  min-width: 200px;
   flex: 1;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
-.node.highlight {
+
+.node::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.node:hover {
   border-color: #58a6ff;
-  background: #0d1117;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(88, 166, 255, 0.2);
 }
+
+.node:hover::before {
+  transform: scaleX(1);
+}
+
+.node.highlight {
+  border-color: #34d058;
+  background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+}
+
+.node.highlight::before {
+  background: linear-gradient(90deg, #34d058 0%, #2ea043 100%);
+}
+
 .node.gcp {
   border-color: #4285f4;
 }
+
+.node.gcp::before {
+  background: linear-gradient(90deg, #4285f4 0%, #34a853 100%);
+}
+
 .node.agent {
   border-color: #34d058;
-  background: #0d1117;
 }
+
 .node-icon {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  display: inline-block;
+  transition: transform 0.3s ease;
 }
+
+.node:hover .node-icon {
+  transform: scale(1.2) rotate(5deg);
+}
+
 .node-title {
-  font-weight: 600;
-  font-size: 0.9rem;
-  margin-bottom: 0.25rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: #ffffff;
 }
+
 .node-desc {
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   color: #8b949e;
-  line-height: 1.4;
+  line-height: 1.6;
 }
+
 .arrow {
   text-align: center;
-  color: #30363d;
-  font-size: 1.5rem;
-  padding: 0.25rem 0;
+  color: #58a6ff;
+  font-size: 2rem;
+  padding: 0.5rem 0;
+  animation: bounce 2s infinite;
 }
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
+
 .badge {
   display: inline-block;
-  font-size: 0.65rem;
-  padding: 0.15rem 0.5rem;
-  border-radius: 12px;
+  font-size: 0.7rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
   background: #21262d;
-  color: #8b949e;
-  margin-top: 0.5rem;
+  color: #e6edf3;
+  margin-top: 0.75rem;
+  margin-right: 0.5rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
-.badge.gemini { background: #1a3a2a; color: #34d058; }
-.badge.adk { background: #1a2a3a; color: #58a6ff; }
-.badge.firestore { background: #2a1a3a; color: #bc8cff; }
-.badge.pubsub { background: #3a2a1a; color: #f0883e; }
-.badge.cloudrun { background: #1a3a3a; color: #39d2c0; }
+
+.badge.gemini { 
+  background: linear-gradient(135deg, #1a3a2a 0%, #0d2818 100%);
+  color: #34d058;
+  border-color: #34d058;
+}
+
+.badge.adk { 
+  background: linear-gradient(135deg, #1a2a3a 0%, #0d1f2d 100%);
+  color: #58a6ff;
+  border-color: #58a6ff;
+}
+
+.badge.firestore { 
+  background: linear-gradient(135deg, #2a1a3a 0%, #1f0d2d 100%);
+  color: #bc8cff;
+  border-color: #bc8cff;
+}
+
+.badge.pubsub { 
+  background: linear-gradient(135deg, #3a2a1a 0%, #2d1f0d 100%);
+  color: #f0883e;
+  border-color: #f0883e;
+}
+
+.badge.cloudrun { 
+  background: linear-gradient(135deg, #1a3a3a 0%, #0d2d2d 100%);
+  color: #39d2c0;
+  border-color: #39d2c0;
+}
+
 .tools-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  width: 100%;
 }
+
 .tool-node {
-  background: #161b22;
-  border: 1px solid #30363d;
-  border-radius: 6px;
-  padding: 0.75rem;
+  background: linear-gradient(135deg, #161b22 0%, #1c2128 100%);
+  border: 2px solid #30363d;
+  border-radius: 10px;
+  padding: 1.25rem;
   text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
-.tool-icon { font-size: 1.25rem; margin-bottom: 0.25rem; }
-.tool-name { font-size: 0.75rem; font-weight: 600; }
-.tool-type { font-size: 0.65rem; color: #8b949e; }
+
+.tool-node::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.tool-node:hover {
+  border-color: #58a6ff;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(88, 166, 255, 0.15);
+}
+
+.tool-node:hover::after {
+  transform: scaleX(1);
+}
+
+.tool-icon { 
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.tool-node:hover .tool-icon {
+  transform: scale(1.15);
+}
+
+.tool-name { 
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 0.25rem;
+}
+
+.tool-type {
+  font-size: 0.75rem;
+  color: #8b949e;
+  font-weight: 500;
+}
+
 .legend {
   display: flex;
-  gap: 1.5rem;
+  gap: 2rem;
   justify-content: center;
-  margin-top: 2rem;
+  margin-top: 3rem;
   flex-wrap: wrap;
+  padding: 1.5rem;
+  background: rgba(22, 27, 34, 0.5);
+  border-radius: 12px;
+  border: 1px solid #30363d;
 }
+
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  color: #8b949e;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: #e6edf3;
+  font-weight: 500;
 }
+
 .legend-dot {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
+  box-shadow: 0 0 10px currentColor;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+  
+  .layer {
+    flex-direction: column;
+  }
+  
+  .layer-label {
+    width: 100%;
+    text-align: left;
+    padding-top: 0;
+  }
+  
+  .tools-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 </style>
 </head>
 <body>
 <div class="container">
   <h1>OnboardFlow Architecture</h1>
-  <p class="subtitle">Autonomous Employee Onboarding — Built with Google ADK + Gemini 3.5 Flash</p>
+  <p class="subtitle">Autonomous Employee Onboarding — Built with Google ADK + Gemini 3.6 Flash</p>
 
   <div class="architecture">
     <!-- Event Trigger Layer -->
@@ -190,7 +381,7 @@ h1 {
           <div class="node-icon">🤖</div>
           <div class="node-title">OnboardFlow Agent</div>
           <div class="node-desc">Orchestrates multi-step onboarding workflow<br>Decides execution order, handles failures, tracks state</div>
-          <span class="badge gemini">Gemini 3.5 Flash</span>
+          <span class="badge gemini">Gemini 3.6 Flash</span>
           <span class="badge adk">Google ADK</span>
         </div>
       </div>
@@ -223,6 +414,46 @@ h1 {
             <div class="tool-name">Email</div>
             <div class="tool-type">Welcome email</div>
           </div>
+          <div class="tool-node">
+            <div class="tool-icon">🐙</div>
+            <div class="tool-name">GitHub</div>
+            <div class="tool-type">Create account</div>
+          </div>
+          <div class="tool-node">
+            <div class="tool-icon">💼</div>
+            <div class="tool-name">CRM</div>
+            <div class="tool-type">Setup access</div>
+          </div>
+          <div class="tool-node">
+            <div class="tool-icon">📊</div>
+            <div class="tool-name">Asana</div>
+            <div class="tool-type">Create project</div>
+          </div>
+          <div class="tool-node">
+            <div class="tool-icon">🎓</div>
+            <div class="tool-name">Training</div>
+            <div class="tool-type">Assign courses</div>
+          </div>
+          <div class="tool-node">
+            <div class="tool-icon">🔒</div>
+            <div class="tool-name">Security</div>
+            <div class="tool-type">Compliance</div>
+          </div>
+          <div class="tool-node">
+            <div class="tool-icon">💰</div>
+            <div class="tool-name">Benefits</div>
+            <div class="tool-type">Enrollment</div>
+          </div>
+          <div class="tool-node">
+            <div class="tool-icon">💻</div>
+            <div class="tool-name">Equipment</div>
+            <div class="tool-type">Provision</div>
+          </div>
+          <div class="tool-node">
+            <div class="tool-icon">✅</div>
+            <div class="tool-name">Verification</div>
+            <div class="tool-type">Follow-up</div>
+          </div>
         </div>
       </div>
     </div>
@@ -245,7 +476,7 @@ h1 {
 
   <div class="legend">
     <div class="legend-item"><div class="legend-dot" style="background:#4285f4"></div> Google Cloud Service</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#34d058"></div> AI Agent (Gemini + ADK)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#34d058"></div> AI Agent (Gemini 3.6 + ADK)</div>
     <div class="legend-item"><div class="legend-dot" style="background:#f0883e"></div> Event Trigger</div>
     <div class="legend-item"><div class="legend-dot" style="background:#bc8cff"></div> State Management</div>
   </div>
