@@ -27,17 +27,31 @@ export const onboardAPI = {
     });
 
     const eventSource = new EventSource(`${API_BASE_URL}/api/onboard/stream?${params}`);
+    let finished = false;
 
     eventSource.onmessage = (event) => {
       try {
         const update: WorkflowUpdate = JSON.parse(event.data);
+        if (update.type === 'workflow_complete' || update.type === 'error') {
+          finished = true;
+        }
         onEvent(update);
+        if (finished) {
+          eventSource.close();
+        }
       } catch (error) {
         console.error('Failed to parse workflow update:', error);
       }
     };
 
     eventSource.onerror = (error) => {
+      // The backend closes the stream once it's done sending events, which
+      // makes the browser's EventSource fire onerror even on a clean finish.
+      // Only treat this as a real error if we hadn't already reached a
+      // terminal event.
+      if (finished) {
+        return;
+      }
       console.error('EventSource error:', error);
       onEvent({
         type: 'error',
