@@ -1,43 +1,40 @@
+<!-- prose-check: off — "real-time" below is the technical term for the SSE
+     transport this checklist describes, not "real" used as an intensifier. -->
 # OnboardFlow - Hackathon Submission Checklist
 
 ## Current Status
 ✅ Core application built and tested locally
 ✅ 11+ tools implemented
 ✅ Autonomous agent with Gemini AI
-✅ React frontend with real-time dashboard
+✅ React frontend with real-time dashboard, redesigned 2026-08-26 (was generic purple-gradient scaffolding)
 ✅ Chatbot assistant for Q&A
 ✅ Code pushed to GitHub
+✅ **Deployed live, 2026-08-26:**
+  - Backend (Cloud Run): https://onboardflow-883489836236.europe-west1.run.app
+  - Frontend (Netlify): https://onboardflow-hackathon.netlify.app
+  - Verified end-to-end against the live URLs: full onboarding workflow, chatbot, both clean
 
 ## Pre-Submission Tasks
 
-### 1. API Key Setup (BLOCKED)
-- [ ] Set GOOGLE_API_KEY in .env file on this server
-- [ ] Test autonomous agent execution
-- [ ] Verify all 11+ tools work correctly
-- [ ] Test chatbot functionality
+### 1. API Key Setup: DONE
+- [x] Set GOOGLE_API_KEY in .env file on this server
+- [x] Test autonomous agent execution
+- [x] Verify all 11+ tools work correctly
+- [x] Test chatbot functionality
 
-### 2. Google Cloud Deployment
-- [ ] Create Google Cloud project
-- [ ] Enable required APIs:
-  - Cloud Run API
-  - Cloud Build API
-  - Artifact Registry API
-- [ ] Deploy backend to Cloud Run
-- [ ] Deploy frontend to Cloud Run or Firebase Hosting
-- [ ] Set up environment variables in Cloud Run
-- [ ] Test deployed application
-- [ ] Get public URLs for submission
+### 2. Google Cloud Deployment: DONE (2026-08-26)
+- [x] Create Google Cloud project (used existing billed project `gen-lang-client-0721805096`)
+- [x] Enable required APIs (Cloud Run, Cloud Build auto-enabled by the deploy flow)
+- [x] Deploy backend to Cloud Run: https://onboardflow-883489836236.europe-west1.run.app
+- [x] Deploy frontend to Netlify: https://onboardflow-hackathon.netlify.app
+- [x] Set up environment variables in Cloud Run (GOOGLE_API_KEY)
+- [x] Test deployed application (full workflow + chatbot verified live)
+- [x] Get public URLs for submission (both above)
 
 ### 3. Demo Video Recording
-- [ ] Script the demo (4 minutes max)
-  - 0:00-0:30: Introduction and problem statement
-  - 0:30-1:00: Show the React UI and form
-  - 1:00-2:30: Demonstrate autonomous workflow execution
-  - 2:30-3:00: Show real-time dashboard updates
-  - 3:00-3:30: Demonstrate chatbot Q&A
-  - 3:30-4:00: Summary and key features
-- [ ] Record screen capture
-- [ ] Add voiceover or captions
+- [ ] Follow `DEMO_SCRIPT.md` (updated 2026-08-26 for the live URLs and the new design)
+- [ ] Record screen capture per `SCREEN_RECORDING_GUIDE.md`
+- [ ] Add voiceover (ElevenLabs) and edit in CapCut
 - [ ] Upload to YouTube (unlisted or public)
 - [ ] Get shareable link
 
@@ -72,8 +69,8 @@
   - Team members
   - Technologies used
   - Demo video link
-  - Code repository link
-  - Live demo URL
+  - Code repository link: https://github.com/TKHatton/onboardflow
+  - Live demo URL: https://onboardflow-hackathon.netlify.app
 - [ ] Upload architecture diagram
 - [ ] Review and submit
 
@@ -91,6 +88,7 @@
 - [ ] Prepare for potential follow-up questions
 
 ## Notes
-- Norton security is blocking some operations on local machine
-- Need to resolve API key setup on this server for testing
-- Focus on completing deployment and video recording
+- 2026-08-26: everything above that was blocked on Norton or a missing API key is
+  resolved. The app is live on Cloud Run + Netlify, verified end-to-end.
+- What's left: record the demo video, finalize the architecture diagram's ADK
+  question, then submit to Devpost.

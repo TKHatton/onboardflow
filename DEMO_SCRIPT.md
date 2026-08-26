@@ -1,193 +1,205 @@
-<!-- prose-check: off — "real-time" below is the technical term for the SSE transport
-     this script describes, not "real" used as an intensifier. -->
+<!-- prose-check: off — "real-time" below is the technical term for the SSE
+     transport this script describes, not "real" used as an intensifier. -->
 # OnboardFlow Demo Video Script
-**Target Duration: 4 minutes**
-**Updated 2026-08-26.** Rewritten against the app state verified live on 2026-08-25: full local
-end-to-end pass (20/20 test steps), two live browser runs (Software Engineer, HR Coordinator),
-chatbot Q&A, and the Pub/Sub trigger endpoint, all clean. The "Connection lost to server" false
-error after a successful run is fixed (`d1bcfbe`), so a completed run now ends on a clean
-"Workflow complete!" instead of a red error banner.
+**Target duration: 3:45-4:00**
+**Updated 2026-08-26.** This is the full version, built to cover everything the judges are
+scoring, not just a quick walkthrough. It records against the live deployed app, not
+localhost:
 
-**Architecture note:** this version describes what the live path actually runs, the Gemini API
-called directly via the `google-genai` SDK, no Google ADK, no Firestore. The repo also contains
-an ADK-based `agent.py` and a Firestore `state_tracker.py`, but neither is wired into `server.py`
-or `autonomous_agent.py`, which is what the demo shows. Say what's true of the running code.
+- **App (record this):** https://onboardflow-hackathon.netlify.app
+- **API:** https://onboardflow-883489836236.europe-west1.run.app
 
----
+Both were verified working end-to-end today: full onboarding workflow, chatbot, and the
+Pub/Sub trigger, all against these exact URLs. The frontend was also redesigned today
+(warm palette, Space Grotesk/Inter type) — it no longer looks like default AI-scaffolded
+UI, so open on this version, not an older recording.
 
-## [0:00-0:30] Opening Hook (30 seconds)
-
-**Visual:** Split screen. Left side shows chaotic manual onboarding (spreadsheets, emails,
-multiple tools), right side shows the OnboardFlow interface.
-
-**Narration:**
-"Employee onboarding is broken. HR teams spend 15-20 hours per new hire manually coordinating
-across dozens of systems: ordering equipment, setting up accounts, scheduling training, sending
-welcome emails. It's repetitive, error-prone, and doesn't scale.
-
-What if an AI agent could handle all of this autonomously? Not just follow a script, but actually
-reason about what each new hire needs based on their role?"
+**Architecture note:** describe what the live path actually runs: the Gemini API called
+directly via the `google-genai` SDK, no Google ADK, no Firestore. The repo also contains
+an ADK-based `agent.py` and a Firestore `state_tracker.py`, but neither is wired into
+`server.py`/`autonomous_agent.py`, which is what this demo shows. Say what's true of the
+running code, and settle the architecture diagram's ADK/Firestore claims before showing it
+on camera.
 
 ---
 
-## [0:30-1:30] Live Demo: Software Engineer (60 seconds)
+## [0:00-0:25] Opening hook
 
-**Visual:** Show the React UI, fill out the form for a new Software Engineer (name of your
-choice, department Engineering, any future start date).
-
-**Narration:**
-"Meet OnboardFlow. Let's onboard a new Software Engineer joining the Engineering team."
-
-**Visual:** Click "Start Onboarding," show the reasoning panel appear.
+**Visual:** A couple seconds on a blank screen or a simple title card, then cut to the live
+app at the URL above (so the browser address bar reads `onboardflow-hackathon.netlify.app`,
+not localhost — that's the proof this is really deployed).
 
 **Narration:**
-"Watch what happens. The agent doesn't execute a hardcoded workflow. Gemini reasons about the
-role first: engineers need GitHub access, developer-grade equipment, technical training, and the
-standard HR steps, welcome email, Slack announcement, orientation, benefits. It plans that whole
-sequence itself, then the frontend streams each step live over server-sent events as the agent
-executes it."
-
-**Visual:** Let it run to completion, ten steps, ending on the green "Workflow complete!" state.
-
-**Narration:**
-"In seconds, the agent has created a Jira tracking ticket, ordered equipment, set up GitHub
-access, sent the welcome email, posted to Slack, scheduled orientation, assigned training,
-scheduled security and compliance modules, enrolled the employee in benefits, and scheduled a
-follow-up verification check. Ten tool calls, zero human intervention, and it all reasoned its own
-way there."
+"Employee onboarding eats fifteen to twenty hours of HR time per new hire: ordering
+equipment, setting up accounts, scheduling training, sending the right emails to the right
+people. Most 'automation' for this is a hardcoded checklist that runs the same steps for
+everyone. OnboardFlow doesn't do that. It reasons about each new hire's role and decides,
+from scratch, what they actually need. This is live right now at
+onboardflow-hackathon.netlify.app."
 
 ---
 
-## [1:30-2:15] Show Adaptability: Different Role (45 seconds)
+## [0:25-1:35] Live run: Software Engineer, full workflow
 
-**Visual:** Clear the form, submit an HR Coordinator instead (different department).
+**Visual:** Fill the form (any name, Role: Software Engineer, Department: Engineering, a
+future start date), click **Start Onboarding**. Let the reasoning panel populate, then let
+every step stream in and complete.
 
-**Narration:**
-"Here's what makes this more than a script: the agent adapts to the role. Let's onboard an HR
-Coordinator instead."
+**Narration (over the reasoning panel appearing):**
+"Watch what happens before a single tool runs. Gemini reads the role and department and
+plans its own sequence: this new hire needs GitHub access, developer-grade equipment,
+technical training, plus the standard onboarding steps. Nothing here is a template — the
+agent decided this."
 
-**Visual:** Show the reasoning panel producing a different plan, and a different, shorter set of
-steps executing (no GitHub account this time).
+**Narration (over steps streaming in):**
+"Each of these is a real tool call, streamed to the browser the instant it completes: a
+Jira ticket, equipment ordered, GitHub access provisioned, a welcome email, a Slack
+announcement, orientation scheduled, training assigned, security modules scheduled,
+benefits enrollment, and a follow-up check. Ten tool calls, ten different systems, zero
+hardcoded logic connecting them."
 
-**Narration:**
-"Same system, different reasoning. This time Gemini decides GitHub access doesn't apply, skips
-it, and instead plans the standard HR onboarding: equipment, welcome communications, orientation,
-training, and benefits. No two roles get the same workflow, because nothing is hardcoded per role.
-The agent is deciding this fresh, every time, from the tools it has available."
-
----
-
-## [2:15-2:45] Chatbot Feature (30 seconds)
-
-**Visual:** Switch to the "Ask Questions" tab.
-
-**Narration:**
-"Onboarding doesn't end after the workflow runs. New hires have questions, so there's a chatbot
-built on the same Gemini model, with full context about that employee's onboarding."
-
-**Visual:** Click one of the suggested questions (e.g. "When will I receive my equipment?").
-
-**Narration:**
-"It answers with actual context: expected delivery window, who to contact, and links to the
-relevant setup guides. Same underlying reasoning engine, now answering questions instead of
-executing a workflow."
+**Visual:** Let it finish on the green "Workflow complete!" state — hold 2 full seconds
+here, it's the payoff shot.
 
 ---
 
-## [2:15-2:45] Event-Driven Trigger: Pub/Sub (30 seconds)
+## [1:35-2:05] Contrast: a second role, different plan
 
-**Visual:** Show a terminal running `python test_pubsub.py`, or narrate over the architecture
-diagram if you'd rather not split attention on camera.
-
-**Narration:**
-"The form isn't the only way to trigger this. OnboardFlow also exposes a Pub/Sub push endpoint,
-so an HR system can publish a new-hire event directly and the same autonomous workflow runs
-without anyone touching the UI. Confirmed working end-to-end against the running server."
-
----
-
-## [3:15-3:45] Technical Architecture (30 seconds)
-
-**Visual:** Show architecture diagram (verify it matches what you say before recording, see the
-note at the top of this file).
+**Visual:** Submit again with a non-engineering role (HR Coordinator, Marketing Manager, or
+similar). Let the reasoning panel and step list populate, but you don't need to let this one
+run to completion on screen — a few seconds of the differing plan is enough.
 
 **Narration:**
-"Under the hood: a FastAPI backend calls Gemini directly to reason about each new hire and select
-from eleven-plus tools: Jira, GitHub, Slack, calendar, email, training, benefits, and more. Each
-tool call streams back to the React frontend in real time over server-sent events, so you're
-watching the agent think and act as it happens, not waiting on a spinner."
+"Same system, same code, completely different plan. This time there's no GitHub step —
+Gemini decided it doesn't apply — and it substitutes role-appropriate tools instead. This
+is the actual proof point: nothing is if-role-equals-engineer hardcoded. The reasoning
+happens fresh, every single time."
 
 ---
 
-## [3:45-4:00] Closing & Impact (15 seconds)
+## [2:05-2:35] Chatbot: the same reasoning, answering questions
 
-**Visual:** Show the completed workflow summary, then the GitHub repo link and end screen.
+**Visual:** Click the **Ask Questions** tab, click one of the suggested question chips
+(e.g. "When will I receive my equipment?").
 
 **Narration:**
-"What used to take fifteen to twenty hours of manual coordination now takes seconds, reasoned
-fresh for every role, every time. That's OnboardFlow. The code is open source, try it yourself."
+"Onboarding doesn't stop after the workflow runs. The chatbot is powered by the same
+Gemini reasoning, now with context about this specific employee's onboarding — it answers
+with an actual delivery window and links to setup resources, not a canned FAQ response."
 
 ---
 
-## Production Notes
+## [2:35-3:05] The part most demos skip: it's event-driven, not just a form
 
-### Screen Recording Setup
-- Backend on localhost:8000, frontend on localhost:5173, both already running.
-- Record at 1920x1080, 60fps.
-- Close other browser tabs before recording so the API status badge and page are clean.
+**Visual:** Switch to a terminal window, run `python test_pubsub.py` against the live
+Cloud Run URL (or narrate over a prepared screenshot of the terminal output if you'd rather
+not context-switch live). Show the 200 OK response and the workflow ID it returns.
 
-### Key Moments to Highlight
-1. The reasoning panel showing Gemini's plan before any tool runs.
-2. The first tool executing and completing (equipment provisioning).
-3. The second role producing a visibly different plan and step list.
-4. The chatbot answering with actual context.
-5. The clean "Workflow complete!" end state. This used to show a false error; it's fixed now,
-   so let it finish on screen instead of cutting away before it does.
-
-### Voiceover Tips
-- Moderate pace, brief pause between sections.
-- Emphasize "reasons" and "decides," not "automates," the differentiator is that nothing is
-  hardcoded per role.
-- Let each workflow run to its actual completion on screen at least once, since the fixed
-  end state is itself evidence the app is solid.
-
-### Backup Plan
-If the live demo has issues during recording:
-- Do a dry run first without recording (recommended regardless).
-- Pre-record one clean full run as a fallback clip.
-- Worst case, narrate over the terminal log output, which shows every tool call succeeding.
-
-### Judging Criteria Alignment
-1. **Innovation & Operational Utility**: autonomous reasoning per role, not a fixed script.
-2. **Architectural Discipline**: tool-calling architecture, real-time streaming, clean error
-   states.
-3. **Demo & Production Readiness**: live demo, real-time updates via SSE.
+**Narration:**
+"The web form isn't the only way in. OnboardFlow also exposes a Pub/Sub push endpoint, so
+an actual HR system — a Workday, a BambooHR — could publish a new-hire event directly, and
+the exact same autonomous agent picks it up and runs, with nobody touching a browser. This
+is what makes it a real integration pattern instead of a demo toy: the reasoning engine is
+decoupled from the UI."
 
 ---
 
-## Checklist Before Recording
+## [3:05-3:35] Architecture, in one breath
 
-- [ ] Backend running on localhost:8000 (`python -m onboardflow.server` from repo root)
-- [ ] Frontend running on localhost:5173 (`npm run dev` in `frontend/`)
-- [ ] `GOOGLE_API_KEY` set in `.env`
-- [ ] Do one full dry run with Software Engineer, confirm it ends on "Workflow complete!"
-- [ ] Do one full dry run with HR Coordinator (or another non-engineering role)
-- [ ] Test chatbot with at least one suggested question
-- [ ] Decide the ADK/Firestore question on the architecture diagram before showing it on camera
+**Visual:** Architecture diagram (only if you've settled the ADK/Firestore accuracy
+question by recording time — otherwise skip this beat entirely and let the closing run
+longer).
+
+**Narration:**
+"Under the hood: a FastAPI backend on Cloud Run calls Gemini directly to reason about each
+new hire and select from eleven-plus tools — Jira, GitHub, Slack, calendar, email, training,
+benefits, and more. Every tool call streams to the React frontend in real time over
+server-sent events, so you're watching the agent think and act as it happens. Frontend's on
+Netlify, backend's on Cloud Run, both live at the URLs on screen right now."
+
+---
+
+## [3:35-3:55] Close
+
+**Visual:** Back to the completed workflow from the first run, or the live URL in the
+address bar.
+
+**Narration:**
+"Fifteen to twenty hours of manual coordination, down to seconds, reasoned fresh for every
+role, every time, live at onboardflow-hackathon.netlify.app right now. That's OnboardFlow.
+Code's open source — try it yourself."
+
+---
+
+## Production notes
+
+### Before recording
+- Confirm both live URLs return real responses, not cached errors — hit the Cloud Run
+  health check (`/`) and load the Netlify app fresh.
+- Do one full dry run of Take 1 (Software Engineer) and confirm it ends on "Workflow
+  complete!" with no red error state.
+- Decide the ADK/Firestore question on the architecture diagram, or cut that beat.
+
+### Key moments to actually hold on screen
+1. The address bar showing the live Netlify URL, not localhost — a couple seconds, early.
+2. The reasoning panel's text, before any tool executes.
+3. The green "Workflow complete!" end state — don't cut away early.
+4. The second role's reasoning text diverging from the first (this is the "not hardcoded"
+   proof, make sure it's legible, not a blur-past).
+5. The Pub/Sub terminal output, specifically the `200` status and workflow ID.
+
+### Voiceover tips
+- Say "reasons" and "decides," not "automates" — that word choice is the actual
+  differentiator between this and a scripted workflow tool.
+- Don't rush the Pub/Sub section. It's the piece that shows this isn't just a pretty form,
+  and it's easy to cut for time. Protect it.
+- Slow down on the architecture beat if you keep it — judges assessing technical depth are
+  listening hardest here.
+
+### Backup plan
+- If a live call is slow or flaky during recording (cold start on Cloud Run after idle,
+  typically a few extra seconds on the first request), pad with a beat of narration over
+  the loading state rather than cutting mid-word. A brief real cold start is honest, not a
+  bug — Cloud Run scales to zero to stay free, which is worth saying if it happens on
+  camera.
+- Keep one clean pre-recorded full run as a fallback clip in case something breaks live.
+
+### Judging criteria, mapped directly to script beats
+1. **Innovation & operational utility:** the 0:25-2:05 block (role-adaptive reasoning,
+   twice).
+2. **Architectural discipline:** the 2:35-3:05 Pub/Sub block plus the 3:05-3:35
+   architecture beat — decoupled trigger, real-time streaming, clean state handling.
+3. **Demo & production readiness:** the whole thing runs against a live, publicly reachable
+   URL, not a local screen share. Say the URL out loud at least once.
+
+---
+
+## Checklist before recording
+
+- [ ] Confirm https://onboardflow-hackathon.netlify.app loads with the new design (warm
+      background, dark header, not the old purple gradient)
+- [ ] Confirm the "API: ✅ Online" badge shows before recording
+- [ ] Dry run: Software Engineer, full completion, no error state
+- [ ] Dry run: second role (HR Coordinator, Marketing Manager, or similar), confirm a
+      visibly different step list
+- [ ] Test the chatbot with one suggested question
+- [ ] Test `python test_pubsub.py` against the live URL, confirm 200 OK
+- [ ] Decide the architecture diagram's ADK/Firestore question, or plan to skip that beat
 - [ ] Close all other browser tabs
-- [ ] Test screen recording setup with a short dry run
+- [ ] Short dry run of the screen recording setup itself before the real take
 
 ---
 
-## Alternative Demo Data
+## Alternative demo roles
 
-Other roles that produce visibly different plans, if you want more variety than
-Software Engineer and HR Coordinator:
+If you want a different pairing than Software Engineer / HR Coordinator for the two live
+runs:
 
 **Marketing Manager:** Asana project setup instead of GitHub, marketing-specific training.
 
-**Operations Manager, Finance Analyst, or Customer Success Manager:** standard equipment plus
-training plus benefits, no engineering-specific tools. Good contrast against the Software
-Engineer run without repeating the HR Coordinator flow.
+**Operations Manager, Finance Analyst, or Customer Success Manager:** standard equipment
+plus training plus benefits, no engineering-specific tools — a clean contrast to the
+Software Engineer run.
 
-Each role was confirmed to trigger a different reasoning plan and step count in earlier testing.
+Each role was confirmed in earlier testing to produce a genuinely different reasoning plan
+and step count, not just different labels on the same steps.

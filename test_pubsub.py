@@ -5,12 +5,14 @@ This demonstrates the event-driven architecture where HR systems
 can publish new hire events to Pub/Sub.
 """
 
+import os
 import requests
 import json
 import base64
 
-# Backend URL (change if running on different host/port)
-BACKEND_URL = "http://localhost:8000"
+# Backend URL. Override with BACKEND_URL to target a deployed instance, e.g.
+# BACKEND_URL=https://onboardflow-883489836236.europe-west1.run.app python test_pubsub.py
+BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 
 # Sample new hire data
 new_hire_data = {

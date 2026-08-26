@@ -1,24 +1,35 @@
 # Screen Recording Guide (silent capture, narrate later in ElevenLabs/CapCut)
 
 No talking needed during capture. Just hit these in order, hold where noted, cut the rest in
-CapCut. Timings below are measured from two live timed runs on 2026-08-26, not estimates.
+CapCut. Timings below are measured from live timed runs on 2026-08-26 against the actual
+deployed URLs, not localhost, not estimates.
+
+**Record against the live app, not a local dev server:**
+- App: https://onboardflow-hackathon.netlify.app
+- API: https://onboardflow-883489836236.europe-west1.run.app
+
+The frontend was redesigned today too: warm paper background, dark header, burnt-orange
+accent, not the old purple gradient. Make sure what's on screen matches that before you hit
+record. If it still looks like a purple gradient, hard-refresh (Ctrl+Shift+R) to clear a
+cached old version.
 
 ## Before you hit record
 
-1. Start the backend: open a terminal in the repo root, run
-   ```
-   python -m onboardflow.server
-   ```
-2. Start the frontend: open a second terminal, run
-   ```
-   npm run dev
-   ```
-   (from the `frontend/` folder, or `npm run dev --prefix frontend` from repo root)
-3. Open `http://localhost:5173` in a clean browser window. Close every other tab.
-4. Resize the browser window to something clean, 1920x1080 or 1280x720. Zoom to 100 percent
+1. Open https://onboardflow-hackathon.netlify.app in a clean browser window. Close every
+   other tab.
+2. Resize the browser window to something clean, 1920x1080 or 1280x720. Zoom to 100 percent
    (Ctrl+0) so text isn't tiny or huge on export.
-5. Confirm the header badge says "API: ✅ Online" before you start recording. If it says
-   "Offline," the backend isn't up yet, don't record until it flips green.
+3. Confirm the header badge says "API: ✅ Online" before you start recording. If it says
+   "Offline," wait a few seconds and refresh, Cloud Run may be cold-starting after being
+   idle, which can take a few extra seconds on the very first hit.
+4. Have a terminal window ready off to the side for Take 4 (Pub/Sub), open it now so you're
+   not fumbling for it mid-recording. From the repo root, this is the command you'll run
+   (leave it unrun until Take 4):
+   ```
+   BACKEND_URL=https://onboardflow-883489836236.europe-west1.run.app python test_pubsub.py
+   ```
+   Confirmed working against this exact live URL on 2026-08-26 (200 OK, workflow ID
+   returned). Without `BACKEND_URL` set, it defaults to localhost, which won't be running.
 
 ## Take 1: Software Engineer (the main run, show this one in full)
 
@@ -36,24 +47,25 @@ Type these exact values into the form:
 Click **Start Onboarding**.
 
 **What happens and when (measured, not estimated):**
-- 0:00 → click. Button goes to "Processing..." with a spinning brain icon and "Agent is
+- 0:00, click. Button goes to "Processing..." with a spinning brain icon and "Agent is
   reasoning..." text.
-- 0:00-0:12 → nothing else changes on screen. This is Gemini thinking. Don't cut this out
+- 0:00-0:12, nothing else changes on screen. This is Gemini thinking. Don't cut this out
   entirely, a couple seconds of it is good, it's the "reasoning, not scripted" beat.
-- ~0:12 → the "Agent Reasoning" paragraph appears, and step cards start populating and turning
-  green one by one.
-- ~0:12-0:35 → all 10 step cards fill in and go green, fastest part to watch, this is the part
-  worth lingering on and possibly speeding up 1.5-2x in the edit.
-- ~0:35-0:36 → the header flips to "✅ Workflow complete!"
+- ~0:12, the "Agent Reasoning" paragraph appears, and step cards start populating, each one
+  turning its status color as it completes.
+- ~0:12-0:35, all 10 step cards fill in, fastest part to watch, this is the part worth
+  lingering on and possibly speeding up 1.5-2x in the edit.
+- ~0:35-0:36, the header flips to "✅ Workflow complete!"
 
-**Hold on the completed screen for 2-3 full seconds before doing anything else.** That green
-"Workflow complete!" state is the payoff shot, don't cut away from it too fast.
+**Hold on the completed screen for 2-3 full seconds before doing anything else.** That state
+is the payoff shot, don't cut away from it too fast.
 
 Total run time to plan around: **about 35-40 seconds, click to complete.**
 
-## Take 2: HR Coordinator (the "it adapts" beat)
+## Take 2: a second role (the "it adapts" beat)
 
-Reload the page (or just refill the form over the completed one, either works). Use:
+Reload the page (or just refill the form over the completed one, either works). Use an HR
+Coordinator, Marketing Manager, or any non-engineering role:
 
 | Field | Value |
 |---|---|
@@ -66,15 +78,13 @@ Reload the page (or just refill the form over the completed one, either works). 
 
 Click **Start Onboarding** again.
 
-Same shape as Take 1, but watch for: no GitHub step this time, and only 9 step cards instead of
-10. That contrast (fewer/different steps for a non-engineering role) is the entire point of this
-clip, so frame the edit to put both step lists on screen at some point, side by side or back to
-back, so the difference actually reads.
+Same shape as Take 1, but watch for: no GitHub step this time, and fewer step cards overall
+(9 instead of 10 for HR Coordinator). That contrast is the entire point of this clip, it's
+the proof that nothing is hardcoded per role. Let at least the reasoning paragraph and first
+few steps play out so the difference actually reads on screen; you don't need the full
+completion.
 
-Total run time: **about 33-35 seconds.**
-
-You don't need to record this one in full if you're keeping the video lean. Ten seconds of it
-starting to diverge from Take 1's step list is enough, cut in fast.
+Total run time if played in full: **about 33-35 seconds.**
 
 ## Take 3: Chatbot (short, one question is plenty)
 
@@ -85,21 +95,30 @@ starting to diverge from Take 1's step list is enough, cut in fast.
    at the bottom.
 4. Hold 1-2 seconds on the finished answer, then stop.
 
-## What to skip if you're keeping this lean
+## Take 4: Pub/Sub trigger (don't skip this one)
 
-- **Pub/Sub / terminal demo**: skip it. It requires switching to a terminal window and re-explaining
-  what Pub/Sub is, not worth the runtime for a lean cut. It's confirmed working if you ever want to
-  add it back in later, just not today.
-- **Architecture diagram**: skip it for now. It still has the open ADK/Firestore accuracy question
-  we haven't resolved, don't put it on camera until that's settled.
+This is what proves the agent isn't just wired to a form, and it's what a judge assessing
+architecture will actually care about seeing.
 
-## Minimum viable recording order (if you want the absolute leanest cut)
+1. Front the terminal window you set up earlier.
+2. Run:
+   ```
+   BACKEND_URL=https://onboardflow-883489836236.europe-west1.run.app python test_pubsub.py
+   ```
+3. Let the output play out on screen: it prints the payload, sends it, and shows the `200`
+   response with a `workflow_id`. That whole thing takes a couple seconds.
+4. Hold 1-2 seconds on the final `200 OK` / workflow ID line before cutting.
 
-1. Take 1, full (35-40s, this is the one complete demonstration)
-2. Take 2, first ~10s only, showing the different reasoning + fewer steps
-3. Take 3, full (10-15s)
+If you'd rather not context-switch to a terminal mid-recording, a screenshot of this output
+with narration over it works too. Just don't cut it entirely.
 
-That's roughly 60-65 seconds of raw footage to work with in CapCut, plenty to cut down to a
-tight 2-3 minute video once you add ElevenLabs narration over it, with room to slow down or
-freeze-frame on the good beats (the reasoning text, the green "Workflow complete!", the chatbot
-answer).
+## Recording order
+
+1. Take 1, full (35-40s): the one complete demonstration
+2. Take 2, at least the reasoning and first few steps (10-15s): the adaptability proof
+3. Take 3, full (10-15s): chatbot
+4. Take 4, full (10-15s): Pub/Sub, the architecture proof
+
+That's roughly 70-85 seconds of raw footage, enough to build a tight 3:45-4:00 final video
+once you add ElevenLabs narration and slow down or freeze-frame the good beats (the
+reasoning text, the completed state, the Pub/Sub response) per `DEMO_SCRIPT.md`.
