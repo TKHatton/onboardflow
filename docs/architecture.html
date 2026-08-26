@@ -143,17 +143,7 @@ h1 {
   color: #3fb950;
 }
 
-.badge.adk { 
-  background: #1a2a3a;
-  color: #58a6ff;
-}
-
-.badge.firestore { 
-  background: #2a1a3a;
-  color: #bc8cff;
-}
-
-.badge.pubsub { 
+.badge.pubsub {
   background: #3a2a1a;
   color: #f0883e;
 }
@@ -269,7 +259,7 @@ h1 {
 <body>
 <div class="container">
   <h1>OnboardFlow Architecture</h1>
-  <p class="subtitle">Autonomous Employee Onboarding — Built with Google ADK + Gemini 3.6 Flash</p>
+  <p class="subtitle">Autonomous Employee Onboarding, built with Gemini 3.6 Flash</p>
 
   <div class="architecture">
     <!-- Event Trigger Layer -->
@@ -309,9 +299,8 @@ h1 {
         <div class="node highlight">
           <div class="node-icon">🤖</div>
           <div class="node-title">OnboardFlow Agent</div>
-          <div class="node-desc">Orchestrates multi-step onboarding workflow<br>Decides execution order, handles failures, tracks state</div>
+          <div class="node-desc">Orchestrates multi-step onboarding workflow<br>Decides execution order, handles failures</div>
           <span class="badge gemini">Gemini 3.6 Flash</span>
-          <span class="badge adk">Google ADK</span>
         </div>
       </div>
     </div>
@@ -465,27 +454,12 @@ h1 {
       </div>
     </div>
 
-    <div class="arrow">↓</div>
-
-    <!-- State Layer -->
-    <div class="layer">
-      <div class="layer-label">State</div>
-      <div class="layer-content">
-        <div class="node gcp">
-          <div class="node-icon">🗄️</div>
-          <div class="node-title">Firestore</div>
-          <div class="node-desc">Audit log of all onboarding actions<br>State tracking per employee<br>Workflow completion status</div>
-          <span class="badge firestore">Google Firestore</span>
-        </div>
-      </div>
-    </div>
   </div>
 
   <div class="legend">
     <div class="legend-item"><div class="legend-dot" style="background:#4285f4"></div> Google Cloud Service</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#3fb950"></div> AI Agent (Gemini 3.6 + ADK)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#3fb950"></div> AI Agent (Gemini 3.6 Flash)</div>
     <div class="legend-item"><div class="legend-dot" style="background:#f0883e"></div> Event Trigger</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#bc8cff"></div> State Management</div>
   </div>
 </div>
 </body>
