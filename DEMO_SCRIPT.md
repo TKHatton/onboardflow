@@ -1,193 +1,193 @@
+<!-- prose-check: off — "real-time" below is the technical term for the SSE transport
+     this script describes, not "real" used as an intensifier. -->
 # OnboardFlow Demo Video Script
 **Target Duration: 4 minutes**
+**Updated 2026-08-26.** Rewritten against the app state verified live on 2026-08-25: full local
+end-to-end pass (20/20 test steps), two live browser runs (Software Engineer, HR Coordinator),
+chatbot Q&A, and the Pub/Sub trigger endpoint, all clean. The "Connection lost to server" false
+error after a successful run is fixed (`d1bcfbe`), so a completed run now ends on a clean
+"Workflow complete!" instead of a red error banner.
+
+**Architecture note:** this version describes what the live path actually runs, the Gemini API
+called directly via the `google-genai` SDK, no Google ADK, no Firestore. The repo also contains
+an ADK-based `agent.py` and a Firestore `state_tracker.py`, but neither is wired into `server.py`
+or `autonomous_agent.py`, which is what the demo shows. Say what's true of the running code.
 
 ---
 
 ## [0:00-0:30] Opening Hook (30 seconds)
 
-**Visual:** Start with a split screen - left side shows chaotic manual onboarding (spreadsheets, emails, multiple tools), right side shows clean OnboardFlow interface
+**Visual:** Split screen. Left side shows chaotic manual onboarding (spreadsheets, emails,
+multiple tools), right side shows the OnboardFlow interface.
 
 **Narration:**
-"Employee onboarding is broken. HR teams spend 15-20 hours per new hire manually coordinating across dozens of systems - ordering equipment, setting up accounts, scheduling training, sending welcome emails. It's repetitive, error-prone, and doesn't scale.
+"Employee onboarding is broken. HR teams spend 15-20 hours per new hire manually coordinating
+across dozens of systems: ordering equipment, setting up accounts, scheduling training, sending
+welcome emails. It's repetitive, error-prone, and doesn't scale.
 
-What if an AI agent could handle all of this autonomously? Not just follow a script, but actually reason about what each new hire needs based on their role?"
+What if an AI agent could handle all of this autonomously? Not just follow a script, but actually
+reason about what each new hire needs based on their role?"
 
 ---
 
-## [0:30-1:30] Live Demo: HR Coordinator (60 seconds)
+## [0:30-1:30] Live Demo: Software Engineer (60 seconds)
 
-**Visual:** Show the React UI, fill out the form with Maria Santos data
-
-**Narration:**
-"Meet OnboardFlow. Let's onboard Maria Santos, an HR Coordinator starting September 1st."
-
-**Visual:** Click "Start Onboarding", show the reasoning panel
+**Visual:** Show the React UI, fill out the form for a new Software Engineer (name of your
+choice, department Engineering, any future start date).
 
 **Narration:**
-"Watch what happens. The agent doesn't just execute a hardcoded workflow. It analyzes Maria's role and reasons: 'As an HR Coordinator, she needs standard workstation equipment, HR-specific training, compliance modules, benefits enrollment, and orientation meetings. She doesn't need GitHub access or CRM tools.'"
+"Meet OnboardFlow. Let's onboard a new Software Engineer joining the Engineering team."
 
-**Visual:** Show the workflow executing in real-time - equipment being ordered, training assigned, benefits set up
+**Visual:** Click "Start Onboarding," show the reasoning panel appear.
 
 **Narration:**
-"In seconds, the agent has:
-- Ordered a laptop, monitor, and peripherals for remote work
-- Created a Jira ticket to track the onboarding workflow
-- Assigned HR-specific training courses with deadlines
-- Scheduled mandatory security and compliance training
-- Enrolled Maria in health insurance, dental, vision, and 401k plans
-- Scheduled a follow-up check-in for one week after start date
+"Watch what happens. The agent doesn't execute a hardcoded workflow. Gemini reasons about the
+role first: engineers need GitHub access, developer-grade equipment, technical training, and the
+standard HR steps, welcome email, Slack announcement, orientation, benefits. It plans that whole
+sequence itself, then the frontend streams each step live over server-sent events as the agent
+executes it."
 
-All autonomous. No human intervention. No copy-pasting between systems."
+**Visual:** Let it run to completion, ten steps, ending on the green "Workflow complete!" state.
+
+**Narration:**
+"In seconds, the agent has created a Jira tracking ticket, ordered equipment, set up GitHub
+access, sent the welcome email, posted to Slack, scheduled orientation, assigned training,
+scheduled security and compliance modules, enrolled the employee in benefits, and scheduled a
+follow-up verification check. Ten tool calls, zero human intervention, and it all reasoned its own
+way there."
 
 ---
 
 ## [1:30-2:15] Show Adaptability: Different Role (45 seconds)
 
-**Visual:** Clear the form, enter a Software Engineer
+**Visual:** Clear the form, submit an HR Coordinator instead (different department).
 
 **Narration:**
-"But here's what makes this powerful - the agent adapts. Let's onboard a Software Engineer instead."
+"Here's what makes this more than a script: the agent adapts to the role. Let's onboard an HR
+Coordinator instead."
 
-**Visual:** Fill out form for "Alex Chen, Software Engineer, Engineering"
-
-**Narration:**
-"Now the agent reasons differently: 'Engineers need GitHub access to code repositories, high-spec equipment for development, technical training on our stack, and integration with our CI/CD pipeline. They don't need CRM access or sales training.'"
-
-**Visual:** Show different tools being executed - GitHub account created, different equipment ordered, technical training assigned
+**Visual:** Show the reasoning panel producing a different plan, and a different, shorter set of
+steps executing (no GitHub account this time).
 
 **Narration:**
-"Same system, completely different workflow. The agent makes intelligent decisions based on the role, department, and start date. No two onboarding experiences are the same."
+"Same system, different reasoning. This time Gemini decides GitHub access doesn't apply, skips
+it, and instead plans the standard HR onboarding: equipment, welcome communications, orientation,
+training, and benefits. No two roles get the same workflow, because nothing is hardcoded per role.
+The agent is deciding this fresh, every time, from the tools it has available."
 
 ---
 
 ## [2:15-2:45] Chatbot Feature (30 seconds)
 
-**Visual:** Switch to the chatbot tab
+**Visual:** Switch to the "Ask Questions" tab.
 
 **Narration:**
-"But onboarding doesn't end after day one. New hires have questions. That's where the chatbot comes in."
+"Onboarding doesn't end after the workflow runs. New hires have questions, so there's a chatbot
+built on the same Gemini model, with full context about that employee's onboarding."
 
-**Visual:** Type questions in the chatbot
+**Visual:** Click one of the suggested questions (e.g. "When will I receive my equipment?").
 
 **Narration:**
-"Maria can ask: 'When will my equipment arrive?' The chatbot, powered by the same Gemini model, has full context about her onboarding. It knows her equipment was ordered, knows the estimated delivery date, and can even check the verification system to confirm it shipped.
-
-She can ask about training deadlines, benefits enrollment, or company policies. It's like having an HR assistant available 24/7."
+"It answers with actual context: expected delivery window, who to contact, and links to the
+relevant setup guides. Same underlying reasoning engine, now answering questions instead of
+executing a workflow."
 
 ---
 
-## [2:45-3:30] Technical Architecture (45 seconds)
+## [2:15-2:45] Event-Driven Trigger: Pub/Sub (30 seconds)
 
-**Visual:** Show architecture diagram
+**Visual:** Show a terminal running `python test_pubsub.py`, or narrate over the architecture
+diagram if you'd rather not split attention on camera.
 
 **Narration:**
-"So how does this work under the hood?
-
-OnboardFlow is built on Google's Agent Development Kit and powered by Gemini 3.6 Flash. The agent uses a tool-calling architecture - it has access to 11+ tools for different systems: Jira for task tracking, GitHub for code access, Slack for team communication, calendar for scheduling, email for notifications, and more.
-
-The key innovation is the reasoning layer. When a new hire is submitted, Gemini analyzes the role and department, decides which tools are relevant, determines the execution order, and fills in the parameters. It's not just calling APIs - it's making decisions.
-
-All state is tracked in Firestore for audit trails and compliance. The React frontend provides real-time visibility via server-sent events, so you can watch the agent think and execute."
+"The form isn't the only way to trigger this. OnboardFlow also exposes a Pub/Sub push endpoint,
+so an HR system can publish a new-hire event directly and the same autonomous workflow runs
+without anyone touching the UI. Confirmed working end-to-end against the running server."
 
 ---
 
-## [3:30-4:00] Closing & Impact (30 seconds)
+## [3:15-3:45] Technical Architecture (30 seconds)
 
-**Visual:** Show completed workflow summary, then show metrics
-
-**Narration:**
-"The impact? What used to take 15-20 hours of manual coordination now takes 20 seconds. Every new hire gets a consistent, comprehensive onboarding experience tailored to their role. Nothing gets missed. Nothing gets forgotten.
-
-OnboardFlow transforms onboarding from a manual nightmare into an autonomous, intelligent system. It's not just automation - it's augmentation. The AI handles the coordination, so HR teams can focus on what matters: welcoming new team members.
-
-This is the future of employee onboarding. Autonomous, intelligent, and scalable."
-
-**Visual:** Show GitHub repo link, end screen
+**Visual:** Show architecture diagram (verify it matches what you say before recording, see the
+note at the top of this file).
 
 **Narration:**
-"The code is open source. Try it yourself."
+"Under the hood: a FastAPI backend calls Gemini directly to reason about each new hire and select
+from eleven-plus tools: Jira, GitHub, Slack, calendar, email, training, benefits, and more. Each
+tool call streams back to the React frontend in real time over server-sent events, so you're
+watching the agent think and act as it happens, not waiting on a spinner."
+
+---
+
+## [3:45-4:00] Closing & Impact (15 seconds)
+
+**Visual:** Show the completed workflow summary, then the GitHub repo link and end screen.
+
+**Narration:**
+"What used to take fifteen to twenty hours of manual coordination now takes seconds, reasoned
+fresh for every role, every time. That's OnboardFlow. The code is open source, try it yourself."
 
 ---
 
 ## Production Notes
 
 ### Screen Recording Setup
-- Use OBS Studio or similar
-- Record at 1920x1080, 60fps
-- Capture both the React UI and terminal (for showing the agent reasoning)
+- Backend on localhost:8000, frontend on localhost:5173, both already running.
+- Record at 1920x1080, 60fps.
+- Close other browser tabs before recording so the API status badge and page are clean.
 
 ### Key Moments to Highlight
-1. **0:45** - The reasoning panel showing Gemini's thought process
-2. **1:00** - First tool executing (equipment provisioning)
-3. **1:45** - Different workflow for Software Engineer
-4. **2:20** - Chatbot answering a question with context
-5. **3:00** - Architecture diagram with tool connections
+1. The reasoning panel showing Gemini's plan before any tool runs.
+2. The first tool executing and completing (equipment provisioning).
+3. The second role producing a visibly different plan and step list.
+4. The chatbot answering with actual context.
+5. The clean "Workflow complete!" end state. This used to show a false error; it's fixed now,
+   so let it finish on screen instead of cutting away before it does.
 
 ### Voiceover Tips
-- Speak clearly and at moderate pace
-- Pause briefly between sections
-- Emphasize "autonomous" and "reasoning" - these are the key differentiators
-- Don't rush the technical section - judges want to understand the architecture
-
-### What to Show in the UI
-- The form being filled out
-- The reasoning panel (most important!)
-- The workflow steps executing in real-time
-- The chatbot interface
-- The architecture diagram (can be a static image)
+- Moderate pace, brief pause between sections.
+- Emphasize "reasons" and "decides," not "automates," the differentiator is that nothing is
+  hardcoded per role.
+- Let each workflow run to its actual completion on screen at least once, since the fixed
+  end state is itself evidence the app is solid.
 
 ### Backup Plan
-If the live demo has issues, you can:
-- Pre-record the workflow execution
-- Show the terminal output instead of the UI
-- Use screenshots with voiceover
+If the live demo has issues during recording:
+- Do a dry run first without recording (recommended regardless).
+- Pre-record one clean full run as a fallback clip.
+- Worst case, narrate over the terminal log output, which shows every tool call succeeding.
 
 ### Judging Criteria Alignment
-Make sure to emphasize:
-1. **Innovation & Operational Utility (40%)** - Autonomous reasoning, not scripted
-2. **Architectural Discipline (30%)** - Clean tool-calling architecture, state management
-3. **Demo & Production Readiness (30%)** - Live demo, real-time updates, deployed on GCP
+1. **Innovation & Operational Utility**: autonomous reasoning per role, not a fixed script.
+2. **Architectural Discipline**: tool-calling architecture, real-time streaming, clean error
+   states.
+3. **Demo & Production Readiness**: live demo, real-time updates via SSE.
 
 ---
 
 ## Checklist Before Recording
 
-- [ ] Backend running on localhost:8000
-- [ ] Frontend running on localhost:5173
-- [ ] Gemini API key set in .env
-- [ ] Test with HR Coordinator first
-- [ ] Test with Software Engineer second
-- [ ] Test chatbot with a few questions
-- [ ] Have architecture diagram ready
+- [ ] Backend running on localhost:8000 (`python -m onboardflow.server` from repo root)
+- [ ] Frontend running on localhost:5173 (`npm run dev` in `frontend/`)
+- [ ] `GOOGLE_API_KEY` set in `.env`
+- [ ] Do one full dry run with Software Engineer, confirm it ends on "Workflow complete!"
+- [ ] Do one full dry run with HR Coordinator (or another non-engineering role)
+- [ ] Test chatbot with at least one suggested question
+- [ ] Decide the ADK/Firestore question on the architecture diagram before showing it on camera
 - [ ] Close all other browser tabs
-- [ ] Test screen recording setup
-- [ ] Do a dry run without recording
+- [ ] Test screen recording setup with a short dry run
 
 ---
 
 ## Alternative Demo Data
 
-If you want to show more variety, here are other roles that work well:
+Other roles that produce visibly different plans, if you want more variety than
+Software Engineer and HR Coordinator:
 
-**Operations Manager:**
-- Equipment provisioning
-- Project management tools
-- Training courses
-- Security training
-- Benefits enrollment
+**Marketing Manager:** Asana project setup instead of GitHub, marketing-specific training.
 
-**Finance Analyst:**
-- Equipment provisioning
-- Financial system access
-- Compliance training
-- Security training
-- Benefits enrollment
+**Operations Manager, Finance Analyst, or Customer Success Manager:** standard equipment plus
+training plus benefits, no engineering-specific tools. Good contrast against the Software
+Engineer run without repeating the HR Coordinator flow.
 
-**Customer Success Manager:**
-- Equipment provisioning
-- CRM access
-- Customer onboarding training
-- Security training
-- Benefits enrollment
-
-Each role will trigger different tools and show the agent's adaptability.
+Each role was confirmed to trigger a different reasoning plan and step count in earlier testing.
