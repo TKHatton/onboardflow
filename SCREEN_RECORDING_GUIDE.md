@@ -45,11 +45,13 @@ Type these exact values into the form:
 | Field | Value |
 |---|---|
 | Employee Name | Jordan Lee |
+| Preferred Name (Optional) | Jordan |
+| Pronouns (Optional) | he/him |
 | Role | Software Engineer |
 | Department | Engineering (dropdown) |
 | Start Date | any date a few weeks out |
 | Email | jordan.lee@example.com |
-| Manager | Alex Rodriguez |
+| Manager (Optional) | Alex Rodriguez |
 
 Click **Start Onboarding**.
 
@@ -77,11 +79,13 @@ Coordinator, Marketing Manager, or any non-engineering role:
 | Field | Value |
 |---|---|
 | Employee Name | Maria Santos |
+| Preferred Name (Optional) | Maria |
+| Pronouns (Optional) | she/her |
 | Role | HR Coordinator |
 | Department | HR (dropdown) |
 | Start Date | any date a few weeks out |
 | Email | maria.santos@example.com |
-| Manager | leave blank |
+| Manager (Optional) | leave blank |
 
 Click **Start Onboarding** again.
 
@@ -124,9 +128,18 @@ architecture will actually care about seeing.
    ```
    $env:BACKEND_URL="https://onboardflow-883489836236.europe-west1.run.app"; python test_pubsub.py
    ```
-3. Let the output play out on screen: it prints the payload, sends it, and shows the `200`
-   response with a `workflow_id`. That whole thing takes a couple seconds.
-4. Hold 1-2 seconds on the final `200 OK` / workflow ID line before cutting.
+3. **Do not switch away or stop recording yet.** It takes about 3-5 seconds to finish. You'll
+   see it print the fake employee data first, that's not the end, keep the terminal on screen.
+4. **You'll know it's actually done when you see these two lines, in this order, near the
+   bottom:**
+   ```
+   Response Status: 200
+
+   ✓ SUCCESS: Pub/Sub message processed successfully!
+   ```
+   Everything above that (the JSON payload, "Sending to...") is setup, not the result. Wait
+   for the word **SUCCESS** specifically.
+5. Once you see `✓ SUCCESS`, hold 1-2 more seconds on that line before cutting or moving on.
 
 If you'd rather not context-switch to a terminal mid-recording, a screenshot of this output
 with narration over it works too. Just don't cut it entirely.
