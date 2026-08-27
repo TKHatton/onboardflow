@@ -76,15 +76,18 @@ happens fresh, every single time."
 
 ---
 
-## [1:50-2:15] Chatbot: the same reasoning, answering questions
+## [1:50-2:15] Switching screens: this is what the new hire actually sees
 
-**Visual:** Click the **Ask Questions** tab, click one of the suggested question chips
-(e.g. "When will I receive my equipment?").
+**Visual:** Click the **👤 New Hire** button in the header's view switcher. The whole screen
+changes, admin tools gone, just a greeting and a chatbot. Click a suggested question chip
+(e.g. "When will I receive my equipment?"). Switch back to **🧑‍💼 HR Team** before moving on.
 
 **Narration:**
-"Onboarding doesn't stop after the workflow runs. The chatbot is powered by the same
-Gemini reasoning, now with context about this specific employee's onboarding — it answers
-with an actual delivery window and links to setup resources, not a canned FAQ response."
+"Everything up to this point was the HR side. Here's the other half: this is the new hire's
+own screen, not another tab in the admin view, a completely separate experience with none of
+the internal tooling on it. Their onboarding assistant is powered by the same Gemini
+reasoning, now with context about their specific onboarding, it answers with an actual
+delivery window and links to setup resources, not a canned FAQ response."
 
 ---
 

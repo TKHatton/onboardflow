@@ -87,14 +87,21 @@ completion.
 
 Total run time if played in full: **about 33-35 seconds.**
 
-## Take 3: Chatbot (short, one question is plenty)
+## Take 3: Chatbot, from the New Hire's own screen (don't skip the toggle)
 
-1. Click the **💬 Ask Questions** tab at the top (only appears after a workflow has run).
+This is the shot that proves the new hire has a completely different screen from HR, not
+just another tab in the same admin view. Don't cut straight to the chatbot, show the switch.
+
+1. At the top of the page, click the **👤 New Hire** button in the "Viewing as:" switcher
+   (it's next to 🧑‍💼 HR Team). Hold 1-2 seconds on this switch, it's a full-screen change:
+   the whole screen replaces itself with a clean greeting and just the chatbot, no admin
+   tools anywhere.
 2. Click the suggested question chip **"When will I receive my equipment?"** (don't type, the
    chip click is cleaner on camera and faster).
 3. Wait about 3-4 seconds for the answer to stream in, including the "RELATED RESOURCES" links
    at the bottom.
-4. Hold 1-2 seconds on the finished answer, then stop.
+4. Hold 1-2 seconds on the finished answer, then click **🧑‍💼 HR Team** to switch back before
+   moving to Take 4, that return switch reinforces the split too.
 
 ## Take 4: Pub/Sub trigger (don't skip this one)
 
