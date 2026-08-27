@@ -18,6 +18,7 @@ function App() {
   const [currentEmployee, setCurrentEmployee] = useState<NewHireData | null>(null);
   const [activeTab, setActiveTab] = useState<'onboarding' | 'history'>('onboarding');
   const [viewMode, setViewMode] = useState<'hr' | 'employee'>('hr');
+  const [showChatbot, setShowChatbot] = useState(false);
 
   useEffect(() => {
     const checkHealth = async () => {
@@ -30,6 +31,7 @@ function App() {
   const handleStartOnboarding = async (data: NewHireData) => {
     setIsLoading(true);
     setCurrentEmployee(data);
+    setShowChatbot(false);
     setWorkflow({
       phase: 'reasoning',
       steps: [],
@@ -171,7 +173,7 @@ function App() {
 
         {viewMode === 'employee' && (
           <div className="employee-portal">
-            <div className="employee-portal-banner">This is what the new hire sees. No admin tools, no other employees' data, just their own onboarding assistant.</div>
+            <div className="employee-portal-banner">This is what the new hire sees. No admin tools, no other employees' data, just their own onboarding.</div>
             {currentEmployee ? (
               <>
                 <div className="employee-portal-greeting">
@@ -185,16 +187,26 @@ function App() {
                 {workflow.steps.length > 0 && (
                   <NewHireChecklist steps={workflow.steps} startDate={currentEmployee.start_date} />
                 )}
-                <div className="chatbot-section">
-                  <Chatbot
-                    employeeName={currentEmployee.preferred_name || currentEmployee.employee_name}
-                    employeeContext={{
-                      role: currentEmployee.role,
-                      department: currentEmployee.department,
-                      start_date: currentEmployee.start_date,
-                    }}
-                  />
-                </div>
+
+                {!showChatbot ? (
+                  <button className="chatbot-toggle-btn" onClick={() => setShowChatbot(true)}>
+                    💬 Ask Your Onboarding Assistant
+                  </button>
+                ) : (
+                  <div className="chatbot-section">
+                    <button className="chatbot-close-btn" onClick={() => setShowChatbot(false)}>
+                      ✕ Close Assistant
+                    </button>
+                    <Chatbot
+                      employeeName={currentEmployee.preferred_name || currentEmployee.employee_name}
+                      employeeContext={{
+                        role: currentEmployee.role,
+                        department: currentEmployee.department,
+                        start_date: currentEmployee.start_date,
+                      }}
+                    />
+                  </div>
+                )}
               </>
             ) : (
               <p className="employee-portal-empty">

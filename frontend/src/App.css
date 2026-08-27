@@ -223,6 +223,40 @@
   margin: 0;
 }
 
+.chatbot-toggle-btn {
+  align-self: center;
+  background: var(--color-ink);
+  color: #fff;
+  border: none;
+  padding: 0.85rem 1.75rem;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.chatbot-toggle-btn:hover {
+  background: var(--color-accent-strong);
+}
+
+.chatbot-close-btn {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  color: var(--color-ink-faint);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0 0 0.5rem 0;
+}
+
+.chatbot-close-btn:hover {
+  color: var(--color-ink);
+}
+
 .employee-portal-empty {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
