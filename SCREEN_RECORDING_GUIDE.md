@@ -24,13 +24,19 @@ cached old version.
    "Offline," wait a few seconds and refresh, Cloud Run may be cold-starting after being
    idle, which can take a few extra seconds on the very first hit.
 4. Have a terminal window ready off to the side for Take 4 (Pub/Sub), open it now so you're
-   not fumbling for it mid-recording. From the repo root, this is the command you'll run
-   (leave it unrun until Take 4):
+   not fumbling for it mid-recording. Open PowerShell (Start menu, type "powershell", Enter),
+   then run:
    ```
-   BACKEND_URL=https://onboardflow-883489836236.europe-west1.run.app python test_pubsub.py
+   cd C:\Dev\GitHub\onboardflow
    ```
-   Confirmed working against this exact live URL on 2026-08-26 (200 OK, workflow ID
-   returned). Without `BACKEND_URL` set, it defaults to localhost, which won't be running.
+   Leave this next command typed out but **not run** until Take 4 (this is PowerShell syntax,
+   not the Unix-style `VAR=value command` form, that fails silently in PowerShell):
+   ```
+   $env:BACKEND_URL="https://onboardflow-883489836236.europe-west1.run.app"; python test_pubsub.py
+   ```
+   Confirmed working against this exact live URL and in this exact PowerShell form on
+   2026-08-27 (200 OK, workflow ID returned). Without `BACKEND_URL` set, it defaults to
+   localhost, which won't be running.
 
 ## Take 1: Software Engineer (the main run, show this one in full)
 
@@ -87,20 +93,25 @@ completion.
 
 Total run time if played in full: **about 33-35 seconds.**
 
-## Take 3: Chatbot, from the New Hire's own screen (don't skip the toggle)
+## Take 3: New Hire screen, checklist first, then the chatbot on demand
 
 This is the shot that proves the new hire has a completely different screen from HR, not
-just another tab in the same admin view. Don't cut straight to the chatbot, show the switch.
+just another tab in the same admin view. Don't cut straight to the chatbot, show the switch
+and let the checklist land first, that's the default view now, not the chat window.
 
 1. At the top of the page, click the **👤 New Hire** button in the "Viewing as:" switcher
    (it's next to 🧑‍💼 HR Team). Hold 1-2 seconds on this switch, it's a full-screen change:
-   the whole screen replaces itself with a clean greeting and just the chatbot, no admin
-   tools anywhere.
-2. Click the suggested question chip **"When will I receive my equipment?"** (don't type, the
+   greeting plus the **Your Onboarding Checklist** panel (Still On You / Already Handled For
+   You), no admin tools anywhere.
+2. Hold 2-3 seconds on the checklist itself, this is the payoff of this shot, let the
+   checkmarks and due dates actually be readable.
+3. Click the **💬 Ask Your Onboarding Assistant** button near the bottom. The chatbot opens
+   below the checklist, with a **✕ Close Assistant** button above it.
+4. Click the suggested question chip **"When will I receive my equipment?"** (don't type, the
    chip click is cleaner on camera and faster).
-3. Wait about 3-4 seconds for the answer to stream in, including the "RELATED RESOURCES" links
+5. Wait about 3-4 seconds for the answer to stream in, including the "RELATED RESOURCES" links
    at the bottom.
-4. Hold 1-2 seconds on the finished answer, then click **🧑‍💼 HR Team** to switch back before
+6. Hold 1-2 seconds on the finished answer, then click **🧑‍💼 HR Team** to switch back before
    moving to Take 4, that return switch reinforces the split too.
 
 ## Take 4: Pub/Sub trigger (don't skip this one)
@@ -108,10 +119,10 @@ just another tab in the same admin view. Don't cut straight to the chatbot, show
 This is what proves the agent isn't just wired to a form, and it's what a judge assessing
 architecture will actually care about seeing.
 
-1. Front the terminal window you set up earlier.
+1. Front the terminal window you set up earlier (already `cd`'d into the repo root).
 2. Run:
    ```
-   BACKEND_URL=https://onboardflow-883489836236.europe-west1.run.app python test_pubsub.py
+   $env:BACKEND_URL="https://onboardflow-883489836236.europe-west1.run.app"; python test_pubsub.py
    ```
 3. Let the output play out on screen: it prints the payload, sends it, and shows the `200`
    response with a `workflow_id`. That whole thing takes a couple seconds.
@@ -125,8 +136,8 @@ with narration over it works too. Just don't cut it entirely.
 This is the shot that proves the Pub/Sub run you just triggered from a terminal, with no
 browser involved at all, actually persisted to Firestore.
 
-1. Switch back to the browser tab.
-2. Click the **🗄️ Past Onboardings** tab.
+1. Switch back to the browser tab, make sure you're on the **🧑‍💼 HR Team** view.
+2. Click the **📨 Onboarding Activity** tab.
 3. Click **Refresh** if the run from Take 4 isn't showing yet (it usually is immediately).
 4. Hold 2 seconds on the list. The employee name and workflow ID should visibly match what
    just printed in the terminal in Take 4, that match is the whole point of this shot.
@@ -137,11 +148,11 @@ Total time: **5-10 seconds**, but don't rush the hold at the end.
 
 1. Take 1, full (35-40s): the one complete demonstration
 2. Take 2, at least the reasoning and first few steps (10-15s): the adaptability proof
-3. Take 3, full (10-15s): chatbot
+3. Take 3, full (20-25s): the view switch, the checklist, then the chatbot on demand
 4. Take 4, full (10-15s): Pub/Sub, the architecture proof
 5. Take 5, full (5-10s): Firestore history, the proof Take 4 was genuine
 
-That's roughly 75-95 seconds of raw footage, enough to build a tight 4:00-4:20 final video
+That's roughly 85-105 seconds of raw footage, enough to build a tight 4:00-4:20 final video
 once you add ElevenLabs narration and slow down or freeze-frame the good beats (the
 reasoning text, the completed state, the Pub/Sub response, the matching history entry) per
 `DEMO_SCRIPT.md`.

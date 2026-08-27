@@ -17,7 +17,7 @@ AI-scaffolded UI, so open on this version, not an older recording.
 **Architecture note:** describe what the live path actually runs: the Gemini API called
 directly via the `google-genai` SDK, no Google ADK. Firestore, however, is genuinely wired
 in now, as of today. Every workflow run (form or Pub/Sub-triggered) persists to it, and the
-app's Past Onboardings tab reads actual records back. The architecture diagram was updated
+app's Onboarding Activity tab reads actual records back. The architecture diagram was updated
 to match, both the ADK removal and the Firestore restoration.
 
 ---
@@ -79,22 +79,27 @@ happens fresh, every single time."
 ## [1:50-2:15] Switching screens: this is what the new hire actually sees
 
 **Visual:** Click the **👤 New Hire** button in the header's view switcher. The whole screen
-changes, admin tools gone, just a greeting and a chatbot. Click a suggested question chip
-(e.g. "When will I receive my equipment?"). Switch back to **🧑‍💼 HR Team** before moving on.
+changes: admin tools gone, a greeting, and **Your Onboarding Checklist**, split into "Still
+On You" (training courses, security modules, benefits enrollment, each with its actual due
+date) and "Already Handled For You" (equipment, accounts, meetings, with dates where they
+exist). Hold on the checklist a beat, then click **💬 Ask Your Onboarding Assistant**, click
+a suggested chip (e.g. "When will I receive my equipment?"). Switch back to **🧑‍💼 HR Team**
+before moving on.
 
 **Narration:**
 "Everything up to this point was the HR side. Here's the other half: this is the new hire's
 own screen, not another tab in the admin view, a completely separate experience with none of
-the internal tooling on it. Their onboarding assistant is powered by the same Gemini
-reasoning, now with context about their specific onboarding, it answers with an actual
-delivery window and links to setup resources, not a canned FAQ response."
+the internal tooling on it. It leads with what actually matters to them: a checklist of
+what's still on them and what's already been taken care of, each pulled from the workflow's
+own results, not a generic to-do list. If they have a question, the assistant is one click away, powered by the
+same Gemini reasoning, now with context about their specific onboarding."
 
 ---
 
 ## [2:15-2:45] The part most demos skip: it's event-driven, not just a form
 
-**Visual:** Switch to a terminal window, run
-`BACKEND_URL=https://onboardflow-883489836236.europe-west1.run.app python test_pubsub.py`
+**Visual:** Switch to a terminal window, run (PowerShell syntax, this is a Windows machine)
+`$env:BACKEND_URL="https://onboardflow-883489836236.europe-west1.run.app"; python test_pubsub.py`
 (or narrate over a prepared screenshot of the terminal output if you'd rather not
 context-switch live). Show the 200 OK response and the workflow ID it returns.
 
@@ -109,7 +114,7 @@ decoupled from the UI."
 
 ## [2:45-3:10] Proof it's not throwaway: the Firestore history view
 
-**Visual:** Switch back to the browser, click the **Past Onboardings** tab. The run you
+**Visual:** Switch back to the browser, click the **Onboarding Activity** tab. The run you
 just triggered from the terminal (no browser involved) should already be sitting there.
 
 **Narration:**
@@ -164,7 +169,7 @@ Code's open source — try it yourself."
 4. The second role's reasoning text diverging from the first (this is the "not hardcoded"
    proof, make sure it's legible, not a blur-past).
 5. The Pub/Sub terminal output, specifically the `200` status and workflow ID.
-6. The Past Onboardings tab showing that exact same workflow ID already sitting there. This
+6. The Onboarding Activity tab showing that exact same workflow ID already sitting there. This
    is the single strongest "this is genuinely deployed" shot in the whole video, don't rush it.
 
 ### Voiceover tips
@@ -206,7 +211,7 @@ Code's open source — try it yourself."
       visibly different step list
 - [ ] Test the chatbot with one suggested question
 - [ ] Test the Pub/Sub command against the live URL, confirm 200 OK
-- [ ] Click Past Onboardings after that Pub/Sub test, confirm the same workflow ID shows up
+- [ ] Click Onboarding Activity after that Pub/Sub test, confirm the same workflow ID shows up
 - [ ] Close all other browser tabs
 - [ ] Short dry run of the screen recording setup itself before the actual take
 
