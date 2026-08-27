@@ -132,7 +132,7 @@ function App() {
             className={activeTab === 'history' ? 'active' : ''}
             onClick={() => setActiveTab('history')}
           >
-            🗄️ Past Onboardings
+            📨 Onboarding Activity
           </button>
         </div>
 

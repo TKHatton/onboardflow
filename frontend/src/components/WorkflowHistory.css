@@ -73,8 +73,20 @@
   flex-wrap: wrap;
   background: var(--color-surface-alt);
   border-left: 3px solid var(--color-border);
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
   border-radius: var(--radius-md);
   padding: 0.9rem 1.1rem;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: background 0.15s;
+}
+
+.history-item:hover {
+  background: var(--color-accent-soft);
 }
 
 .history-item.history-completed {
@@ -141,4 +153,45 @@
 .history-time {
   font-size: 0.8rem;
   color: var(--color-ink-faint);
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: var(--color-ink-soft);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.back-btn:hover {
+  color: var(--color-accent-strong);
+}
+
+.detail-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-bottom: 1.25rem;
+}
+
+.detail-name {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.detail-legal-name {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--color-ink-faint);
+}
+
+.detail-meta {
+  font-size: 0.85rem;
+  color: var(--color-ink-soft);
 }

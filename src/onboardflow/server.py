@@ -44,6 +44,8 @@ class NewHireRequest(BaseModel):
     start_date: str
     email: str
     manager: str | None = None
+    preferred_name: str | None = None
+    pronouns: str | None = None
 
 
 class ChatRequest(BaseModel):
@@ -89,6 +91,8 @@ async def stream_onboarding(
     start_date: str,
     email: str,
     manager: str | None = None,
+    preferred_name: str | None = None,
+    pronouns: str | None = None,
 ):
     """
     Start onboarding workflow and stream updates via SSE.
@@ -110,6 +114,8 @@ async def stream_onboarding(
                 start_date=start_date,
                 email=email,
                 manager=manager,
+                preferred_name=preferred_name,
+                pronouns=pronouns,
             ):
                 # Format as SSE
                 yield f"data: {json.dumps(update)}\n\n"
@@ -140,6 +146,15 @@ async def list_workflows(limit: int = 20):
     """List recent onboarding workflows persisted in Firestore, newest first."""
     workflows = await state_tracker.list_recent_workflows(limit=limit)
     return {"workflows": workflows}
+
+
+@app.get("/api/workflows/{workflow_id}")
+async def get_workflow_detail(workflow_id: str):
+    """Full detail for one workflow, including every step's tool call and result."""
+    workflow = await state_tracker.get_workflow(workflow_id)
+    if workflow is None:
+        raise HTTPException(status_code=404, detail="Workflow not found")
+    return workflow
 
 
 @app.post("/api/chat")
@@ -201,6 +216,8 @@ async def pubsub_push(request: Request):
             start_date=new_hire["start_date"],
             email=new_hire["email"],
             manager=new_hire.get("manager"),
+            preferred_name=new_hire.get("preferred_name"),
+            pronouns=new_hire.get("pronouns"),
         ):
             workflow_id = update.get("workflow_id", workflow_id)
             print(f"[{workflow_id}] {update}")

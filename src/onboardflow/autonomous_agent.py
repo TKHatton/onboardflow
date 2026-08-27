@@ -143,15 +143,21 @@ class AutonomousAgent:
         start_date: str,
         email: str,
         manager: str | None,
+        preferred_name: str | None = None,
     ) -> dict:
         """Values to fill in for any tool parameter Gemini leaves out.
 
         Keyed by the parameter names the tools declare, so filling is driven by
         each tool's signature instead of a hand-maintained per-tool list.
         """
+        # Every communication-facing tool (email, Slack, calendar) addresses the
+        # employee by whatever "employee_name" it's given, so a preferred name
+        # flows into every generated message automatically. Legal name is still
+        # what's on the submitted form and in Firestore's own employee_name field.
+        display_name = preferred_name or employee_name
         channel = f"#{department.lower().replace(' ', '-')}" if department else "#general"
         return {
-            "employee_name": employee_name,
+            "employee_name": display_name,
             "role": role,
             "department": department,
             "email": email,
@@ -159,12 +165,12 @@ class AutonomousAgent:
             "start_date": start_date,
             "manager": manager,
             "manager_name": manager,
-            "title": f"Orientation: {employee_name}",
+            "title": f"Orientation: {display_name}",
             "attendees": [addr for addr in (email,) if addr],
             "start_time": f"{start_date}T09:00:00",
             "channel": channel,
             "message": (
-                f"Welcome {employee_name} to the team as our new {role}!"
+                f"Welcome {display_name} to the team as our new {role}!"
             ),
         }
 
@@ -228,27 +234,35 @@ class AutonomousAgent:
         start_date: str,
         email: str,
         manager: str | None = None,
+        preferred_name: str | None = None,
+        pronouns: str | None = None,
     ) -> AsyncGenerator[dict, None]:
         """
         Use Gemini to autonomously plan and execute comprehensive onboarding workflow.
         Yields real-time updates as the agent reasons and executes.
         """
-        
+
         # Step 1: Gemini reasons about what steps to take
         yield {
             "type": "reasoning_start",
             "message": f"Analyzing onboarding requirements for {role} in {department}..."
         }
-        
+
         planning_prompt = f"""You are an autonomous onboarding agent. Based on the new hire details below, decide what steps to take.
 
 New Hire Details:
-- Name: {employee_name}
+- Legal Name: {employee_name}
+- Preferred Name: {preferred_name or 'same as legal name'}
+- Pronouns: {pronouns or 'not specified'}
 - Role: {role}
 - Department: {department}
 - Start Date: {start_date}
 - Email: {email}
 - Manager: {manager or 'Not specified'}
+
+When you write the "action" text for any step involving direct communication with the
+employee (welcome email, Slack message, meeting title), address them by their preferred
+name if one is given, and use their pronouns correctly if specified.
 
 Available tools (use these exact parameter names):
 {self._tool_catalog()}
@@ -297,7 +311,9 @@ Don't use all tools for everyone - be thoughtful about what's relevant."""
         plan = json.loads(response.text)
 
         workflow_id = await self.state.log_workflow_start(
-            employee_name, role, department, start_date, email
+            employee_name, role, department, start_date, email,
+            preferred_name=preferred_name, pronouns=pronouns,
+            reasoning=plan.get("reasoning"),
         )
 
         yield {
@@ -343,12 +359,21 @@ Don't use all tools for everyone - be thoughtful about what's relevant."""
                 # list, so a tool that declares to_email/attendees/start_time
                 # gets them the same way one declaring email/start_date does.
                 fallbacks = self._parameter_fallbacks(
-                    employee_name, role, department, start_date, email, manager
+                    employee_name, role, department, start_date, email, manager,
+                    preferred_name=preferred_name,
                 )
                 sig = inspect.signature(tool_func)
                 for param_name in sig.parameters:
                     if param_name not in normalized_params and param_name in fallbacks:
                         normalized_params[param_name] = fallbacks[param_name]
+
+                # Gemini sometimes fills employee_name with the legal name even
+                # when told to prefer the given name, since the parameter is
+                # literally called "employee_name". Force it here rather than
+                # relying on instruction-following for something a real HR
+                # system would never get wrong.
+                if preferred_name and "employee_name" in normalized_params:
+                    normalized_params["employee_name"] = preferred_name
 
                 # Drop anything this tool does not accept, then coerce the
                 # values Gemini does send into the shapes the tools expect.
@@ -375,7 +400,9 @@ Don't use all tools for everyone - be thoughtful about what's relevant."""
                     continue
 
                 result = tool_func(**valid_params)
-                await self.state.log_step(workflow_id, f"{tool_name}: {step_data['action']}", True, result)
+                await self.state.log_step(
+                    workflow_id, tool_name, step_data["action"], True, result
+                )
 
                 yield {
                     "type": "step_complete",
@@ -386,7 +413,7 @@ Don't use all tools for everyone - be thoughtful about what's relevant."""
 
             except Exception as e:
                 await self.state.log_step(
-                    workflow_id, f"{tool_name}: {step_data['action']}", False, {"error": str(e)}
+                    workflow_id, tool_name, step_data["action"], False, {"error": str(e)}
                 )
                 yield {
                     "type": "step_error",

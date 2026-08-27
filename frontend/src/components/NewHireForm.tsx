@@ -15,6 +15,8 @@ export function NewHireForm({ onSubmit, isLoading }: NewHireFormProps) {
     start_date: '',
     email: '',
     manager: '',
+    preferred_name: '',
+    pronouns: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -53,6 +55,32 @@ export function NewHireForm({ onSubmit, isLoading }: NewHireFormProps) {
             required
             disabled={isLoading}
             placeholder="John Doe"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="preferred_name">Preferred Name (Optional)</label>
+          <input
+            type="text"
+            id="preferred_name"
+            name="preferred_name"
+            value={formData.preferred_name}
+            onChange={handleChange}
+            disabled={isLoading}
+            placeholder="What they'd like to be called, if different"
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="pronouns">Pronouns (Optional)</label>
+          <input
+            type="text"
+            id="pronouns"
+            name="pronouns"
+            value={formData.pronouns}
+            onChange={handleChange}
+            disabled={isLoading}
+            placeholder="e.g. she/her, he/him, they/them"
           />
         </div>
 

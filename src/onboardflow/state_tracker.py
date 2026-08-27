@@ -49,6 +49,9 @@ class StateTracker:
         department: str,
         start_date: str,
         email: str,
+        preferred_name: Optional[str] = None,
+        pronouns: Optional[str] = None,
+        reasoning: Optional[str] = None,
     ) -> str:
         """Log workflow start to Firestore.
 
@@ -63,6 +66,9 @@ class StateTracker:
                 doc_ref = self.db.collection(self.COLLECTION).document(workflow_id)
                 doc_ref.set({
                     "employee_name": employee_name,
+                    "preferred_name": preferred_name,
+                    "pronouns": pronouns,
+                    "reasoning": reasoning,
                     "role": role,
                     "department": department,
                     "start_date": start_date,
@@ -81,7 +87,8 @@ class StateTracker:
     async def log_step(
         self,
         workflow_id: str,
-        step_name: str,
+        tool: str,
+        action: str,
         success: bool,
         result: dict,
     ):
@@ -91,7 +98,8 @@ class StateTracker:
                 doc_ref = self.db.collection(self.COLLECTION).document(workflow_id)
                 doc_ref.update({
                     "steps": firestore.ArrayUnion([{
-                        "step": step_name,
+                        "tool": tool,
+                        "action": action,
                         "success": success,
                         "result": result,
                         "completed_at": datetime.now().isoformat(),
@@ -101,7 +109,7 @@ class StateTracker:
                 print(f"[STATE] Failed to log step: {e}")
 
         status = "OK" if success else "FAILED"
-        print(f"[STATE] {status}: {step_name}")
+        print(f"[STATE] {status}: {tool}: {action}")
 
     async def log_workflow_complete(self, workflow_id: str):
         """Mark workflow as complete."""
@@ -167,6 +175,7 @@ class StateTracker:
                 results.append({
                     "workflow_id": doc.id,
                     "employee_name": data.get("employee_name"),
+                    "preferred_name": data.get("preferred_name"),
                     "role": data.get("role"),
                     "department": data.get("department"),
                     "status": data.get("status"),

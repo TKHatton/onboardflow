@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { NewHireData, WorkflowUpdate, WorkflowSummary } from './types';
+import type { NewHireData, WorkflowUpdate, WorkflowSummary, WorkflowDetail } from './types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
@@ -24,6 +24,8 @@ export const onboardAPI = {
       start_date: data.start_date,
       email: data.email,
       manager: data.manager || '',
+      preferred_name: data.preferred_name || '',
+      pronouns: data.pronouns || '',
     });
 
     const eventSource = new EventSource(`${API_BASE_URL}/api/onboard/stream?${params}`);
@@ -84,5 +86,10 @@ export const onboardAPI = {
   getWorkflows: async (): Promise<WorkflowSummary[]> => {
     const response = await api.get('/api/workflows');
     return response.data.workflows;
+  },
+
+  getWorkflowDetail: async (workflowId: string): Promise<WorkflowDetail> => {
+    const response = await api.get(`/api/workflows/${workflowId}`);
+    return response.data;
   },
 };
