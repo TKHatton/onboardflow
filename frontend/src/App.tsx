@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { NewHireForm } from './components/NewHireForm';
 import { WorkflowDashboard } from './components/WorkflowDashboard';
 import { Chatbot } from './components/Chatbot';
+import { WorkflowHistory } from './components/WorkflowHistory';
 import { onboardAPI } from './api';
 import type { NewHireData, WorkflowState, WorkflowUpdate } from './types';
 import './App.css';
@@ -14,7 +15,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [apiStatus, setApiStatus] = useState<'checking' | 'online' | 'offline'>('checking');
   const [currentEmployee, setCurrentEmployee] = useState<NewHireData | null>(null);
-  const [activeTab, setActiveTab] = useState<'onboarding' | 'chatbot'>('onboarding');
+  const [activeTab, setActiveTab] = useState<'onboarding' | 'chatbot' | 'history'>('onboarding');
 
   useEffect(() => {
     const checkHealth = async () => {
@@ -112,22 +113,28 @@ function App() {
       </header>
 
       <main className="app-main">
-        {currentEmployee && workflow.phase !== 'idle' && (
-          <div className="tab-navigation">
-            <button
-              className={activeTab === 'onboarding' ? 'active' : ''}
-              onClick={() => setActiveTab('onboarding')}
-            >
-              📋 Onboarding Workflow
-            </button>
+        <div className="tab-navigation">
+          <button
+            className={activeTab === 'onboarding' ? 'active' : ''}
+            onClick={() => setActiveTab('onboarding')}
+          >
+            📋 Onboarding Workflow
+          </button>
+          {currentEmployee && workflow.phase !== 'idle' && (
             <button
               className={activeTab === 'chatbot' ? 'active' : ''}
               onClick={() => setActiveTab('chatbot')}
             >
               💬 Ask Questions
             </button>
-          </div>
-        )}
+          )}
+          <button
+            className={activeTab === 'history' ? 'active' : ''}
+            onClick={() => setActiveTab('history')}
+          >
+            🗄️ Past Onboardings
+          </button>
+        </div>
 
         {activeTab === 'onboarding' && (
           <>
@@ -153,6 +160,12 @@ function App() {
                 start_date: currentEmployee.start_date,
               }}
             />
+          </div>
+        )}
+
+        {activeTab === 'history' && (
+          <div className="history-section">
+            <WorkflowHistory />
           </div>
         )}
       </main>

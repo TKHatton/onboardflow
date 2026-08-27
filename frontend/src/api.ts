@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { NewHireData, WorkflowUpdate } from './types';
+import type { NewHireData, WorkflowUpdate, WorkflowSummary } from './types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
@@ -79,5 +79,10 @@ export const onboardAPI = {
     } catch {
       return false;
     }
+  },
+
+  getWorkflows: async (): Promise<WorkflowSummary[]> => {
+    const response = await api.get('/api/workflows');
+    return response.data.workflows;
   },
 };

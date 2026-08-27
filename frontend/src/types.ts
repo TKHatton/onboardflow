@@ -37,3 +37,14 @@ export interface WorkflowState {
   current_step?: number;
   error?: string;
 }
+
+export interface WorkflowSummary {
+  workflow_id: string;
+  employee_name: string;
+  role: string;
+  department: string;
+  status: 'in_progress' | 'completed' | 'failed';
+  started_at: string;
+  completed_at: string | null;
+  step_count: number;
+}

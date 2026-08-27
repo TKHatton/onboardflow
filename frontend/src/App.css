@@ -102,12 +102,14 @@
   flex-direction: column;
 }
 
-.chatbot-section {
+.chatbot-section,
+.history-section {
   display: flex;
   flex-direction: column;
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
+  grid-column: 1 / -1;
 }
 
 .tab-navigation {
