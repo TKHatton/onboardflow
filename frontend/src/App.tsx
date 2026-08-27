@@ -3,6 +3,7 @@ import { NewHireForm } from './components/NewHireForm';
 import { WorkflowDashboard } from './components/WorkflowDashboard';
 import { Chatbot } from './components/Chatbot';
 import { WorkflowHistory } from './components/WorkflowHistory';
+import { NewHireChecklist } from './components/NewHireChecklist';
 import { onboardAPI } from './api';
 import type { NewHireData, WorkflowState, WorkflowUpdate } from './types';
 import './App.css';
@@ -181,6 +182,9 @@ function App() {
                     {currentEmployee.role} &middot; {currentEmployee.department}
                   </p>
                 </div>
+                {workflow.steps.length > 0 && (
+                  <NewHireChecklist steps={workflow.steps} startDate={currentEmployee.start_date} />
+                )}
                 <div className="chatbot-section">
                   <Chatbot
                     employeeName={currentEmployee.preferred_name || currentEmployee.employee_name}
