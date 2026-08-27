@@ -22,6 +22,7 @@ from .tools import (
     verify_onboarding_completion,
     answer_onboarding_question,
 )
+from .state_tracker import StateTracker
 
 
 class AutonomousAgent:
@@ -48,13 +49,14 @@ class AutonomousAgent:
         "duration": "duration_minutes",
     }
 
-    def __init__(self):
+    def __init__(self, state: StateTracker | None = None):
         api_key = os.getenv("GOOGLE_API_KEY")
         if not api_key:
             raise ValueError("GOOGLE_API_KEY environment variable not set")
-        
+
         self.client = genai.Client(api_key=api_key)
         self.model = "gemini-3.6-flash"
+        self.state = state or StateTracker()
         
         # Available tools with descriptions
         self.tools = {
@@ -293,13 +295,18 @@ Don't use all tools for everyone - be thoughtful about what's relevant."""
         )
         
         plan = json.loads(response.text)
-        
+
+        workflow_id = await self.state.log_workflow_start(
+            employee_name, role, department, start_date, email
+        )
+
         yield {
             "type": "reasoning_complete",
+            "workflow_id": workflow_id,
             "reasoning": plan["reasoning"],
             "steps_planned": len(plan["steps"])
         }
-        
+
         # Step 2: Execute each planned step
         for i, step_data in enumerate(plan["steps"], 1):
             tool_name = step_data["tool"]
@@ -368,6 +375,7 @@ Don't use all tools for everyone - be thoughtful about what's relevant."""
                     continue
 
                 result = tool_func(**valid_params)
+                await self.state.log_step(workflow_id, f"{tool_name}: {step_data['action']}", True, result)
 
                 yield {
                     "type": "step_complete",
@@ -375,18 +383,23 @@ Don't use all tools for everyone - be thoughtful about what's relevant."""
                     "tool": tool_name,
                     "result": result
                 }
-                
+
             except Exception as e:
+                await self.state.log_step(
+                    workflow_id, f"{tool_name}: {step_data['action']}", False, {"error": str(e)}
+                )
                 yield {
                     "type": "step_error",
                     "step": i,
                     "tool": tool_name,
                     "message": str(e)
                 }
-        
+
         # Step 3: Final summary
+        await self.state.log_workflow_complete(workflow_id)
         yield {
             "type": "workflow_complete",
+            "workflow_id": workflow_id,
             "message": f"Comprehensive onboarding workflow completed for {employee_name}",
             "total_steps": len(plan["steps"])
         }

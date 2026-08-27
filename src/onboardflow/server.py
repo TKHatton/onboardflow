@@ -14,7 +14,11 @@ import uvicorn
 load_dotenv()
 
 from .autonomous_agent import AutonomousAgent
+from .state_tracker import StateTracker
 
+# One Firestore client for the process, reused across requests instead of
+# reconnecting per call.
+state_tracker = StateTracker()
 
 app = FastAPI(
     title="OnboardFlow API",
@@ -97,7 +101,7 @@ async def stream_onboarding(
     async def event_generator() -> AsyncGenerator[str, None]:
         """Generate SSE events from autonomous agent."""
         try:
-            agent = AutonomousAgent()
+            agent = AutonomousAgent(state=state_tracker)
 
             async for update in agent.plan_onboarding(
                 employee_name=employee_name,
@@ -131,13 +135,20 @@ async def stream_onboarding(
     )
 
 
+@app.get("/api/workflows")
+async def list_workflows(limit: int = 20):
+    """List recent onboarding workflows persisted in Firestore, newest first."""
+    workflows = await state_tracker.list_recent_workflows(limit=limit)
+    return {"workflows": workflows}
+
+
 @app.post("/api/chat")
 async def chat(request: ChatRequest):
     """
     Answer onboarding questions using the chatbot.
     """
     try:
-        agent = AutonomousAgent()
+        agent = AutonomousAgent(state=state_tracker)
         response = agent.chat(
             employee_name=request.employee_name,
             question=request.question,
@@ -179,12 +190,10 @@ async def pubsub_push(request: Request):
                 raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
         
         # Trigger onboarding workflow
-        agent = AutonomousAgent()
-        
+        agent = AutonomousAgent(state=state_tracker)
+
         # Run the workflow (in production, you'd want to do this async)
-        workflow_id = f"workflow-{new_hire['employee_name'].lower().replace(' ', '-')}-{int(asyncio.get_event_loop().time())}"
-        
-        # Execute workflow
+        workflow_id = None
         async for update in agent.plan_onboarding(
             employee_name=new_hire["employee_name"],
             role=new_hire["role"],
@@ -193,9 +202,9 @@ async def pubsub_push(request: Request):
             email=new_hire["email"],
             manager=new_hire.get("manager"),
         ):
-            # Log each step (in production, persist to database)
+            workflow_id = update.get("workflow_id", workflow_id)
             print(f"[{workflow_id}] {update}")
-        
+
         # Return 200 to acknowledge the message
         return {"status": "success", "workflow_id": workflow_id}
         
