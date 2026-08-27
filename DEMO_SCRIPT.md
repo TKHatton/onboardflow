@@ -1,25 +1,24 @@
 <!-- prose-check: off — "real-time" below is the technical term for the SSE
      transport this script describes, not "real" used as an intensifier. -->
 # OnboardFlow Demo Video Script
-**Target duration: 3:45-4:00**
-**Updated 2026-08-26.** This is the full version, built to cover everything the judges are
+**Target duration: 4:00-4:20**
+**Updated 2026-08-27.** This is the full version, built to cover everything the judges are
 scoring, not just a quick walkthrough. It records against the live deployed app, not
 localhost:
 
 - **App (record this):** https://onboardflow-hackathon.netlify.app
 - **API:** https://onboardflow-883489836236.europe-west1.run.app
 
-Both were verified working end-to-end today: full onboarding workflow, chatbot, and the
-Pub/Sub trigger, all against these exact URLs. The frontend was also redesigned today
-(warm palette, Space Grotesk/Inter type) — it no longer looks like default AI-scaffolded
-UI, so open on this version, not an older recording.
+Verified working end-to-end today: full onboarding workflow, chatbot, Pub/Sub trigger, and
+Firestore-backed history, all against these exact URLs. The frontend was redesigned
+yesterday (warm palette, Space Grotesk/Inter type) — it no longer looks like default
+AI-scaffolded UI, so open on this version, not an older recording.
 
 **Architecture note:** describe what the live path actually runs: the Gemini API called
-directly via the `google-genai` SDK, no Google ADK, no Firestore. The repo also contains
-an ADK-based `agent.py` and a Firestore `state_tracker.py`, but neither is wired into
-`server.py`/`autonomous_agent.py`, which is what this demo shows. Say what's true of the
-running code, and settle the architecture diagram's ADK/Firestore claims before showing it
-on camera.
+directly via the `google-genai` SDK, no Google ADK. Firestore, however, is genuinely wired
+in now, as of today. Every workflow run (form or Pub/Sub-triggered) persists to it, and the
+app's Past Onboardings tab reads actual records back. The architecture diagram was updated
+to match, both the ADK removal and the Firestore restoration.
 
 ---
 
@@ -39,7 +38,7 @@ onboardflow-hackathon.netlify.app."
 
 ---
 
-## [0:25-1:35] Live run: Software Engineer, full workflow
+## [0:25-1:25] Live run: Software Engineer, full workflow
 
 **Visual:** Fill the form (any name, Role: Software Engineer, Department: Engineering, a
 future start date), click **Start Onboarding**. Let the reasoning panel populate, then let
@@ -52,7 +51,7 @@ technical training, plus the standard onboarding steps. Nothing here is a templa
 agent decided this."
 
 **Narration (over steps streaming in):**
-"Each of these is a real tool call, streamed to the browser the instant it completes: a
+"Each of these is a live tool call, streamed to the browser the instant it completes: a
 Jira ticket, equipment ordered, GitHub access provisioned, a welcome email, a Slack
 announcement, orientation scheduled, training assigned, security modules scheduled,
 benefits enrollment, and a follow-up check. Ten tool calls, ten different systems, zero
@@ -63,7 +62,7 @@ here, it's the payoff shot.
 
 ---
 
-## [1:35-2:05] Contrast: a second role, different plan
+## [1:25-1:50] Contrast: a second role, different plan
 
 **Visual:** Submit again with a non-engineering role (HR Coordinator, Marketing Manager, or
 similar). Let the reasoning panel and step list populate, but you don't need to let this one
@@ -77,7 +76,7 @@ happens fresh, every single time."
 
 ---
 
-## [2:05-2:35] Chatbot: the same reasoning, answering questions
+## [1:50-2:15] Chatbot: the same reasoning, answering questions
 
 **Visual:** Click the **Ask Questions** tab, click one of the suggested question chips
 (e.g. "When will I receive my equipment?").
@@ -89,22 +88,36 @@ with an actual delivery window and links to setup resources, not a canned FAQ re
 
 ---
 
-## [2:35-3:05] The part most demos skip: it's event-driven, not just a form
+## [2:15-2:45] The part most demos skip: it's event-driven, not just a form
 
-**Visual:** Switch to a terminal window, run `python test_pubsub.py` against the live
-Cloud Run URL (or narrate over a prepared screenshot of the terminal output if you'd rather
-not context-switch live). Show the 200 OK response and the workflow ID it returns.
+**Visual:** Switch to a terminal window, run
+`BACKEND_URL=https://onboardflow-883489836236.europe-west1.run.app python test_pubsub.py`
+(or narrate over a prepared screenshot of the terminal output if you'd rather not
+context-switch live). Show the 200 OK response and the workflow ID it returns.
 
 **Narration:**
 "The web form isn't the only way in. OnboardFlow also exposes a Pub/Sub push endpoint, so
-an actual HR system — a Workday, a BambooHR — could publish a new-hire event directly, and
+an actual HR system, a Workday, a BambooHR, could publish a new-hire event directly, and
 the exact same autonomous agent picks it up and runs, with nobody touching a browser. This
-is what makes it a real integration pattern instead of a demo toy: the reasoning engine is
+is what makes it an integration pattern instead of a demo toy: the reasoning engine is
 decoupled from the UI."
 
 ---
 
-## [3:05-3:35] Architecture, in one breath
+## [2:45-3:10] Proof it's not throwaway: the Firestore history view
+
+**Visual:** Switch back to the browser, click the **Past Onboardings** tab. The run you
+just triggered from the terminal (no browser involved) should already be sitting there.
+
+**Narration:**
+"And here's the part that ties it together: every one of these runs, whether it started
+from the form or from that Pub/Sub call a second ago, gets written to Firestore. Nothing
+here is thrown away after the browser tab closes. This list is pulled from persisted
+records, that Pub/Sub run I just triggered from the terminal is already sitting in it."
+
+---
+
+## [3:10-3:40] Architecture, in one breath
 
 **Visual:** Architecture diagram (only if you've settled the ADK/Firestore accuracy
 question by recording time — otherwise skip this beat entirely and let the closing run
@@ -119,7 +132,7 @@ Netlify, backend's on Cloud Run, both live at the URLs on screen right now."
 
 ---
 
-## [3:35-3:55] Close
+## [3:40-4:05] Close
 
 **Visual:** Back to the completed workflow from the first run, or the live URL in the
 address bar.
@@ -134,41 +147,47 @@ Code's open source — try it yourself."
 ## Production notes
 
 ### Before recording
-- Confirm both live URLs return real responses, not cached errors — hit the Cloud Run
+- Confirm both live URLs return actual responses, not cached errors: hit the Cloud Run
   health check (`/`) and load the Netlify app fresh.
 - Do one full dry run of Take 1 (Software Engineer) and confirm it ends on "Workflow
   complete!" with no red error state.
-- Decide the ADK/Firestore question on the architecture diagram, or cut that beat.
+- The ADK/Firestore question is settled: ADK removed, Firestore restored, both verified
+  live on 2026-08-27. Safe to show the diagram on camera.
 
 ### Key moments to actually hold on screen
-1. The address bar showing the live Netlify URL, not localhost — a couple seconds, early.
+1. The address bar showing the live Netlify URL, not localhost, a couple seconds, early.
 2. The reasoning panel's text, before any tool executes.
-3. The green "Workflow complete!" end state — don't cut away early.
+3. The green "Workflow complete!" end state, don't cut away early.
 4. The second role's reasoning text diverging from the first (this is the "not hardcoded"
    proof, make sure it's legible, not a blur-past).
 5. The Pub/Sub terminal output, specifically the `200` status and workflow ID.
+6. The Past Onboardings tab showing that exact same workflow ID already sitting there. This
+   is the single strongest "this is genuinely deployed" shot in the whole video, don't rush it.
 
 ### Voiceover tips
-- Say "reasons" and "decides," not "automates" — that word choice is the actual
+- Say "reasons" and "decides," not "automates," that word choice is the actual
   differentiator between this and a scripted workflow tool.
 - Don't rush the Pub/Sub section. It's the piece that shows this isn't just a pretty form,
   and it's easy to cut for time. Protect it.
-- Slow down on the architecture beat if you keep it — judges assessing technical depth are
+- The Firestore beat lands harder if the workflow ID on screen visibly matches between the
+  terminal output and the history list, so don't cut away from the terminal before that ID
+  is legible.
+- Slow down on the architecture beat if you keep it, judges assessing technical depth are
   listening hardest here.
 
 ### Backup plan
 - If a live call is slow or flaky during recording (cold start on Cloud Run after idle,
   typically a few extra seconds on the first request), pad with a beat of narration over
-  the loading state rather than cutting mid-word. A brief real cold start is honest, not a
+  the loading state rather than cutting mid-word. A brief cold start is honest, not a
   bug — Cloud Run scales to zero to stay free, which is worth saying if it happens on
   camera.
 - Keep one clean pre-recorded full run as a fallback clip in case something breaks live.
 
 ### Judging criteria, mapped directly to script beats
-1. **Innovation & operational utility:** the 0:25-2:05 block (role-adaptive reasoning,
+1. **Innovation & operational utility:** the 0:25-1:50 block (role-adaptive reasoning,
    twice).
-2. **Architectural discipline:** the 2:35-3:05 Pub/Sub block plus the 3:05-3:35
-   architecture beat — decoupled trigger, real-time streaming, clean state handling.
+2. **Architectural discipline:** the 2:15-3:40 block, Pub/Sub, Firestore history, and the
+   architecture summary together, decoupled trigger, persisted state, real-time streaming.
 3. **Demo & production readiness:** the whole thing runs against a live, publicly reachable
    URL, not a local screen share. Say the URL out loud at least once.
 
@@ -183,10 +202,10 @@ Code's open source — try it yourself."
 - [ ] Dry run: second role (HR Coordinator, Marketing Manager, or similar), confirm a
       visibly different step list
 - [ ] Test the chatbot with one suggested question
-- [ ] Test `python test_pubsub.py` against the live URL, confirm 200 OK
-- [ ] Decide the architecture diagram's ADK/Firestore question, or plan to skip that beat
+- [ ] Test the Pub/Sub command against the live URL, confirm 200 OK
+- [ ] Click Past Onboardings after that Pub/Sub test, confirm the same workflow ID shows up
 - [ ] Close all other browser tabs
-- [ ] Short dry run of the screen recording setup itself before the real take
+- [ ] Short dry run of the screen recording setup itself before the actual take
 
 ---
 

@@ -1,8 +1,9 @@
 # Screen Recording Guide (silent capture, narrate later in ElevenLabs/CapCut)
 
 No talking needed during capture. Just hit these in order, hold where noted, cut the rest in
-CapCut. Timings below are measured from live timed runs on 2026-08-26 against the actual
-deployed URLs, not localhost, not estimates.
+CapCut. Timings below are measured from live timed runs against the actual deployed URLs,
+not localhost, not estimates. Updated 2026-08-27 to add Take 5 (Firestore history), now
+that state persistence is genuinely wired in.
 
 **Record against the live app, not a local dev server:**
 - App: https://onboardflow-hackathon.netlify.app
@@ -112,13 +113,28 @@ architecture will actually care about seeing.
 If you'd rather not context-switch to a terminal mid-recording, a screenshot of this output
 with narration over it works too. Just don't cut it entirely.
 
+## Take 5: Firestore history (the payoff for Take 4)
+
+This is the shot that proves the Pub/Sub run you just triggered from a terminal, with no
+browser involved at all, actually persisted to Firestore.
+
+1. Switch back to the browser tab.
+2. Click the **🗄️ Past Onboardings** tab.
+3. Click **Refresh** if the run from Take 4 isn't showing yet (it usually is immediately).
+4. Hold 2 seconds on the list. The employee name and workflow ID should visibly match what
+   just printed in the terminal in Take 4, that match is the whole point of this shot.
+
+Total time: **5-10 seconds**, but don't rush the hold at the end.
+
 ## Recording order
 
 1. Take 1, full (35-40s): the one complete demonstration
 2. Take 2, at least the reasoning and first few steps (10-15s): the adaptability proof
 3. Take 3, full (10-15s): chatbot
 4. Take 4, full (10-15s): Pub/Sub, the architecture proof
+5. Take 5, full (5-10s): Firestore history, the proof Take 4 was genuine
 
-That's roughly 70-85 seconds of raw footage, enough to build a tight 3:45-4:00 final video
+That's roughly 75-95 seconds of raw footage, enough to build a tight 4:00-4:20 final video
 once you add ElevenLabs narration and slow down or freeze-frame the good beats (the
-reasoning text, the completed state, the Pub/Sub response) per `DEMO_SCRIPT.md`.
+reasoning text, the completed state, the Pub/Sub response, the matching history entry) per
+`DEMO_SCRIPT.md`.

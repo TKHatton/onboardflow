@@ -9,10 +9,13 @@
 ✅ React frontend with real-time dashboard, redesigned 2026-08-26 (was generic purple-gradient scaffolding)
 ✅ Chatbot assistant for Q&A
 ✅ Code pushed to GitHub
-✅ **Deployed live, 2026-08-26:**
+✅ **Deployed live, 2026-08-26, Firestore added 2026-08-27:**
   - Backend (Cloud Run): https://onboardflow-883489836236.europe-west1.run.app
   - Frontend (Netlify): https://onboardflow-hackathon.netlify.app
-  - Verified end-to-end against the live URLs: full onboarding workflow, chatbot, both clean
+  - Verified end-to-end against the live URLs: full onboarding workflow, chatbot, Pub/Sub
+    trigger, and Firestore-backed Past Onboardings history, all clean
+  - Architecture diagram matches the running code (ADK removed, Firestore genuinely wired
+    in, not just described)
 
 ## Pre-Submission Tasks
 
