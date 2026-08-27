@@ -66,6 +66,14 @@ function formatDate(iso?: string): string {
   return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
+// A plain "YYYY-MM-DD" date (no time) is parsed by `new Date()` as UTC
+// midnight, which renders as the previous day in any timezone behind UTC.
+// Build the Date from its parts directly instead, so it stays local.
+function formatPlainDate(plainDate: string, options: Intl.DateTimeFormatOptions): string {
+  const [year, month, day] = plainDate.split('-').map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString(undefined, options);
+}
+
 interface NewHireChecklistProps {
   steps: WorkflowStep[];
   startDate?: string;
@@ -81,7 +89,7 @@ export function NewHireChecklist({ steps, startDate }: NewHireChecklistProps) {
         <h3>Your Onboarding Checklist</h3>
         {startDate && (
           <span className="checklist-start-date">
-            Start date: {new Date(startDate).toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
+            Start date: {formatPlainDate(startDate, { weekday: 'long', month: 'long', day: 'numeric' })}
           </span>
         )}
       </div>
