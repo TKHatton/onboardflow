@@ -15,7 +15,8 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [apiStatus, setApiStatus] = useState<'checking' | 'online' | 'offline'>('checking');
   const [currentEmployee, setCurrentEmployee] = useState<NewHireData | null>(null);
-  const [activeTab, setActiveTab] = useState<'onboarding' | 'chatbot' | 'history'>('onboarding');
+  const [activeTab, setActiveTab] = useState<'onboarding' | 'history'>('onboarding');
+  const [viewMode, setViewMode] = useState<'hr' | 'employee'>('hr');
 
   useEffect(() => {
     const checkHealth = async () => {
@@ -110,62 +111,93 @@ function App() {
         <div className={`api-status ${apiStatus}`}>
           API: {apiStatus === 'checking' ? 'Checking...' : apiStatus === 'online' ? '✅ Online' : '❌ Offline'}
         </div>
+        <div className="view-switcher">
+          <span className="view-switcher-label">Viewing as:</span>
+          <button
+            className={viewMode === 'hr' ? 'active' : ''}
+            onClick={() => setViewMode('hr')}
+          >
+            🧑‍💼 HR Team
+          </button>
+          <button
+            className={viewMode === 'employee' ? 'active' : ''}
+            onClick={() => setViewMode('employee')}
+          >
+            👤 New Hire
+          </button>
+        </div>
       </header>
 
       <main className="app-main">
-        <div className="tab-navigation">
-          <button
-            className={activeTab === 'onboarding' ? 'active' : ''}
-            onClick={() => setActiveTab('onboarding')}
-          >
-            📋 Onboarding Workflow
-          </button>
-          {currentEmployee && workflow.phase !== 'idle' && (
-            <button
-              className={activeTab === 'chatbot' ? 'active' : ''}
-              onClick={() => setActiveTab('chatbot')}
-            >
-              💬 Ask Questions
-            </button>
-          )}
-          <button
-            className={activeTab === 'history' ? 'active' : ''}
-            onClick={() => setActiveTab('history')}
-          >
-            📨 Onboarding Activity
-          </button>
-        </div>
-
-        {activeTab === 'onboarding' && (
+        {viewMode === 'hr' && (
           <>
-            <div className="form-section">
-              <NewHireForm onSubmit={handleStartOnboarding} isLoading={isLoading} />
+            <div className="tab-navigation">
+              <button
+                className={activeTab === 'onboarding' ? 'active' : ''}
+                onClick={() => setActiveTab('onboarding')}
+              >
+                📋 Onboarding Workflow
+              </button>
+              <button
+                className={activeTab === 'history' ? 'active' : ''}
+                onClick={() => setActiveTab('history')}
+              >
+                📨 Onboarding Activity
+              </button>
             </div>
 
-            {workflow.phase !== 'idle' && (
-              <div className="dashboard-section">
-                <WorkflowDashboard workflow={workflow} />
+            {activeTab === 'onboarding' && (
+              <>
+                <div className="form-section">
+                  <NewHireForm onSubmit={handleStartOnboarding} isLoading={isLoading} />
+                </div>
+
+                {workflow.phase !== 'idle' && (
+                  <div className="dashboard-section">
+                    <WorkflowDashboard workflow={workflow} />
+                  </div>
+                )}
+              </>
+            )}
+
+            {activeTab === 'history' && (
+              <div className="history-section">
+                <WorkflowHistory />
               </div>
             )}
           </>
         )}
 
-        {activeTab === 'chatbot' && currentEmployee && (
-          <div className="chatbot-section">
-            <Chatbot
-              employeeName={currentEmployee.employee_name}
-              employeeContext={{
-                role: currentEmployee.role,
-                department: currentEmployee.department,
-                start_date: currentEmployee.start_date,
-              }}
-            />
-          </div>
-        )}
-
-        {activeTab === 'history' && (
-          <div className="history-section">
-            <WorkflowHistory />
+        {viewMode === 'employee' && (
+          <div className="employee-portal">
+            <div className="employee-portal-banner">This is what the new hire sees. No admin tools, no other employees' data, just their own onboarding assistant.</div>
+            {currentEmployee ? (
+              <>
+                <div className="employee-portal-greeting">
+                  <h2>
+                    Welcome, {currentEmployee.preferred_name || currentEmployee.employee_name}
+                  </h2>
+                  <p>
+                    {currentEmployee.role} &middot; {currentEmployee.department}
+                  </p>
+                </div>
+                <div className="chatbot-section">
+                  <Chatbot
+                    employeeName={currentEmployee.preferred_name || currentEmployee.employee_name}
+                    employeeContext={{
+                      role: currentEmployee.role,
+                      department: currentEmployee.department,
+                      start_date: currentEmployee.start_date,
+                    }}
+                  />
+                </div>
+              </>
+            ) : (
+              <p className="employee-portal-empty">
+                No onboarding has been started yet this session. Switch to the HR view, submit
+                the form, then come back here to see the new hire's side of it.
+              </p>
+            )}
           </div>
         )}
       </main>

@@ -76,6 +76,46 @@
   border-color: rgba(248, 113, 113, 0.22);
 }
 
+.view-switcher {
+  margin-top: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 0.35rem;
+}
+
+.view-switcher-label {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.5);
+  padding-left: 0.6rem;
+  font-weight: 600;
+}
+
+.view-switcher button {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.65);
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.view-switcher button:hover {
+  color: #fff;
+}
+
+.view-switcher button.active {
+  background: var(--color-accent);
+  color: #fff;
+}
+
 .app-main {
   max-width: 1200px;
   margin: 0 auto;
@@ -143,4 +183,52 @@
   background: var(--color-ink);
   border-color: var(--color-ink);
   color: #fff;
+}
+
+.employee-portal {
+  grid-column: 1 / -1;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.employee-portal-banner {
+  background: var(--color-running-soft);
+  color: var(--color-running);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1.1rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.employee-portal-greeting {
+  text-align: center;
+}
+
+.employee-portal-greeting h2 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--color-ink);
+  margin: 0 0 0.25rem 0;
+}
+
+.employee-portal-greeting p {
+  color: var(--color-ink-soft);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.employee-portal-empty {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  text-align: center;
+  color: var(--color-ink-soft);
+  box-shadow: var(--shadow-card);
 }
