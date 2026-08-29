@@ -48,3 +48,21 @@ credentials.json
 
 # Local Netlify folder
 .netlify
+
+# Internal planning / submission-prep docs (not for judges)
+BUILD_PLAN.md
+REBUILD_PLAN.md
+TEST_REPORT.md
+SETUP_API_KEY.md
+SUBMISSION_CHECKLIST.md
+DEVPOST_SUBMISSION_FINAL.md
+YOUTUBE_UPLOAD.md
+DEPOST_DESCRIPTION.md
+DEMO_SCRIPT.md
+SCREEN_RECORDING_GUIDE.md
+RECORDING_CUE_SHEET.md
+ELEVENLABS_SCRIPT.md
+elevenlabs_single_take.txt
+docs/devpost_submission.md
+docs/devpost_submission_v2.md
+docs/demo_video_script.md
